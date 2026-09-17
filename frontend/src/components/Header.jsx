@@ -1,7 +1,16 @@
 import React from 'react';
-import { Sparkles, ShieldCheck, User, Store, Award } from 'lucide-react';
+import { Sparkles, ShieldCheck, User, LogIn, MessageSquare, Award } from 'lucide-react';
 
-export default function Header({ brandProfile, formalizationPercentage, onOpenProfile, activeTab, setActiveTab }) {
+export default function Header({ 
+  user, 
+  brandProfile, 
+  formalizationPercentage, 
+  onOpenProfile, 
+  onOpenAuth, 
+  onOpenAdvisory,
+  activeTab, 
+  setActiveTab 
+}) {
   return (
     <header className="sticky top-0 z-40 bg-[#FDFBF7]/90 backdrop-blur-md border-b border-slate-200/80 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,7 +27,7 @@ export default function Header({ brandProfile, formalizationPercentage, onOpenPr
                   MY PIM <span className="text-sage-600">EXPRESS</span>
                 </span>
                 <span className="hidden sm:inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full bg-clay-100 text-clay-700 border border-clay-200">
-                  Beauty & Cosmetics
+                  Cosmetics & Beauty
                 </span>
               </div>
               <p className="text-xs text-slate-500 font-medium hidden xs:block">
@@ -71,28 +80,51 @@ export default function Header({ brandProfile, formalizationPercentage, onOpenPr
             </button>
           </nav>
 
-          {/* User Profile & Formalization Badge */}
-          <div className="flex items-center gap-3">
+          {/* User Profile, Auth & Advisory Actions */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            
+            {/* Pack Completo CTA */}
+            <button
+              onClick={onOpenAdvisory}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-clay-50 border border-clay-200 text-clay-800 text-xs font-bold hover:bg-clay-100 transition-colors"
+              title="Pack Completo y Asesoría en Vivo"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-clay-600" />
+              <span>Pack Completo</span>
+            </button>
+
+            {/* Formalization badge */}
             <button
               onClick={() => setActiveTab('legal')}
-              className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sage-50 border border-sage-200 text-sage-800 text-xs font-semibold hover:bg-sage-100 transition-colors"
-              title="Termómetro de Formalización Legal"
+              className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sage-50 border border-sage-200 text-sage-800 text-xs font-semibold hover:bg-sage-100 transition-colors"
             >
               <ShieldCheck className="w-4 h-4 text-sage-600" />
               <span>Formalización: <strong>{formalizationPercentage}%</strong></span>
             </button>
 
-            <button
-              onClick={onOpenProfile}
-              className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-white border border-slate-200 hover:border-sage-400 text-slate-700 hover:text-sage-700 shadow-sm transition-all text-xs sm:text-sm font-semibold"
-            >
-              <div className="w-7 h-7 rounded-xl bg-clay-100 text-clay-700 flex items-center justify-center font-bold">
-                {brandProfile.name ? brandProfile.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
-              </div>
-              <span className="max-w-[120px] truncate hidden xs:inline">
-                {brandProfile.name || 'Mi Marca'}
-              </span>
-            </button>
+            {/* Auth / Profile Button */}
+            {user ? (
+              <button
+                onClick={onOpenProfile}
+                className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-white border border-slate-200 hover:border-sage-400 text-slate-700 hover:text-sage-700 shadow-sm transition-all text-xs sm:text-sm font-semibold"
+              >
+                <div className="w-7 h-7 rounded-xl bg-clay-100 text-clay-700 flex items-center justify-center font-bold">
+                  {user.name ? user.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
+                </div>
+                <span className="max-w-[120px] truncate hidden xs:inline">
+                  {user.brandName || user.name || 'Mi Marca'}
+                </span>
+              </button>
+            ) : (
+              <button
+                onClick={() => onOpenAuth('login')}
+                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-sage-600 hover:bg-sage-700 text-white shadow-sm transition-all text-xs sm:text-sm font-bold"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Ingresar / Registro</span>
+              </button>
+            )}
+
           </div>
 
         </div>

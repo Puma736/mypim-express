@@ -7,6 +7,8 @@ import CostCalculatorModule from './components/CostCalculatorModule';
 import AcademyModule from './components/AcademyModule';
 import InciLabelGenerator from './components/InciLabelGenerator';
 import BrandProfileModal from './components/BrandProfileModal';
+import AuthModal from './components/AuthModal';
+import AdvisoryModal from './components/AdvisoryModal';
 import { PRESET_FORMULAS } from './utils/costingEngine';
 import { LEGAL_STEPS } from './utils/legalData';
 import { Heart, Sparkles, ShieldCheck } from 'lucide-react';
@@ -14,11 +16,21 @@ import { Heart, Sparkles, ShieldCheck } from 'lucide-react';
 export default function App() {
   const [activeTab, setActiveTab] = useState('landing');
   
+  // User Session State
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('mypim_user');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem('mypim_token') || null;
+  });
+
   // Brand Profile State
   const [brandProfile, setBrandProfile] = useState(() => {
     const saved = localStorage.getItem('mypim_brand_profile');
     return saved ? JSON.parse(saved) : {
-      name: 'BioCosmética Bolivia',
+      name: 'BioCosmética Bolivia S.R.L.',
       founder: 'María Rene Aguilera',
       city: 'Santa Cruz de la Sierra',
       subsector: 'SR-01 Cosmética Natural',
@@ -33,7 +45,6 @@ export default function App() {
     if (saved) {
       return JSON.parse(saved);
     }
-    // Default presets
     return PRESET_FORMULAS.map(p => ({
       ...p,
       costingResults: {
@@ -61,8 +72,27 @@ export default function App() {
   // Modals
   const [showInciGenerator, setShowInciGenerator] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
+  const [showAdvisoryModal, setShowAdvisoryModal] = useState(false);
 
-  // Sync state to LocalStorage
+  // Sync to LocalStorage
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('mypim_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('mypim_user');
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem('mypim_token', token);
+    } else {
+      localStorage.removeItem('mypim_token');
+    }
+  }, [token]);
+
   useEffect(() => {
     localStorage.setItem('mypim_brand_profile', JSON.stringify(brandProfile));
   }, [brandProfile]);
@@ -91,14 +121,26 @@ export default function App() {
     }
   };
 
-  const handleSaveFormula = (formulaData) => {
+  const handleSaveFormula = async (formulaData) => {
     const existsIndex = savedFormulas.findIndex(f => f.id === formulaData.id);
+    let updated;
     if (existsIndex >= 0) {
-      const updated = [...savedFormulas];
+      updated = [...savedFormulas];
       updated[existsIndex] = formulaData;
-      setSavedFormulas(updated);
     } else {
-      setSavedFormulas([formulaData, ...savedFormulas]);
+      updated = [formulaData, ...savedFormulas];
+    }
+    setSavedFormulas(updated);
+
+    // Sync to backend API asynchronously
+    try {
+      await fetch('http://localhost:5000/api/costing/formulas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formulaData)
+      });
+    } catch (e) {
+      // Quiet fail if server offline
     }
   };
 
@@ -107,14 +149,35 @@ export default function App() {
     setActiveTab('calculator');
   };
 
+  const handleAuthSuccess = (userData, userToken) => {
+    setUser(userData);
+    setToken(userToken);
+    setBrandProfile(prev => ({
+      ...prev,
+      name: userData.brandName || prev.name,
+      founder: userData.name || prev.founder,
+      city: userData.city || prev.city,
+      subsector: userData.subsector || prev.subsector
+    }));
+    setActiveTab('dashboard');
+  };
+
+  const handleOpenAuth = (mode = 'login') => {
+    setAuthMode(mode);
+    setShowAuthModal(true);
+  };
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#FDFBF7] text-[#1F2937]">
       
       {/* Top Navbar */}
       <Header
+        user={user}
         brandProfile={brandProfile}
         formalizationPercentage={formalizationPercentage}
         onOpenProfile={() => setShowProfileModal(true)}
+        onOpenAuth={handleOpenAuth}
+        onOpenAdvisory={() => setShowAdvisoryModal(true)}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
@@ -179,6 +242,21 @@ export default function App() {
           brandProfile={brandProfile}
           onSave={(updated) => setBrandProfile(updated)}
           onClose={() => setShowProfileModal(false)}
+        />
+      )}
+
+      {showAuthModal && (
+        <AuthModal
+          initialMode={authMode}
+          onAuthSuccess={handleAuthSuccess}
+          onClose={() => setShowAuthModal(false)}
+        />
+      )}
+
+      {showAdvisoryModal && (
+        <AdvisoryModal
+          brandProfile={brandProfile}
+          onClose={() => setShowAdvisoryModal(false)}
         />
       )}
 

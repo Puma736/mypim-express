@@ -26,21 +26,21 @@ import TechnicalSheetModal from './TechnicalSheetModal';
 
 export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
   
-  // State for costing variables
-  const [formulaName, setFormulaName] = useState('Mi Formulación Cosmética');
-  const [subsector, setSubsector] = useState('SR-02');
-  const [batchUnits, setBatchUnits] = useState(20);
+  // State for costing variables - INICIA DESDE CERO (Limpio)
+  const [formulaName, setFormulaName] = useState('');
+  const [subsector, setSubsector] = useState('SR-01');
+  const [batchUnits, setBatchUnits] = useState(1);
   const [lossPercentage, setLossPercentage] = useState(5);
-  const [hoursLote, setHoursLote] = useState(2.5);
-  const [hourlyRate, setHourlyRate] = useState(25.0);
-  const [cifLote, setCifLote] = useState(35.0);
-  const [fixedMonthlyCosts, setFixedMonthlyCosts] = useState(1800.0);
+  const [hoursLote, setHoursLote] = useState(0);
+  const [hourlyRate, setHourlyRate] = useState(0);
+  const [cifLote, setCifLote] = useState(0);
+  const [fixedMonthlyCosts, setFixedMonthlyCosts] = useState(0);
   const [retailMargin, setRetailMargin] = useState(0.55);
   const [wholesaleMargin, setWholesaleMargin] = useState(0.30);
 
-  // Dynamic lists
-  const [ingredients, setIngredients] = useState(PRESET_FORMULAS[0].ingredients);
-  const [packaging, setPackaging] = useState(PRESET_FORMULAS[0].packaging);
+  // Dynamic lists - INICIAN VACÍAS
+  const [ingredients, setIngredients] = useState([]);
+  const [packaging, setPackaging] = useState([]);
 
   // Technical sheet modal
   const [showTechSheet, setShowTechSheet] = useState(false);
@@ -54,18 +54,33 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
   }, [loadedFormula]);
 
   const applyFormulaData = (data) => {
-    setFormulaName(data.name || 'Fórmula Cosmética');
+    setFormulaName(data.name || '');
     setSubsector(data.subsector || 'SR-01');
-    setBatchUnits(data.batchUnits || 20);
+    setBatchUnits(data.batchUnits || 1);
     setLossPercentage(data.lossPercentage || 5);
-    setHoursLote(data.hoursLote || 2);
-    setHourlyRate(data.hourlyRate || 25);
-    setCifLote(data.cifLote || 30);
-    setFixedMonthlyCosts(data.fixedMonthlyCosts || 1800);
+    setHoursLote(data.hoursLote || 0);
+    setHourlyRate(data.hourlyRate || 0);
+    setCifLote(data.cifLote || 0);
+    setFixedMonthlyCosts(data.fixedMonthlyCosts || 0);
     setRetailMargin(data.retailMargin || 0.55);
     setWholesaleMargin(data.wholesaleMargin || 0.30);
     setIngredients(data.ingredients || []);
     setPackaging(data.packaging || []);
+  };
+
+  const resetToCleanState = () => {
+    setFormulaName('');
+    setSubsector('SR-01');
+    setBatchUnits(1);
+    setLossPercentage(5);
+    setHoursLote(0);
+    setHourlyRate(0);
+    setCifLote(0);
+    setFixedMonthlyCosts(0);
+    setRetailMargin(0.55);
+    setWholesaleMargin(0.30);
+    setIngredients([]);
+    setPackaging([]);
   };
 
   const handlePresetSelect = (presetId) => {
@@ -93,12 +108,12 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
   const addIngredient = () => {
     const newIng = {
       id: Date.now().toString(),
-      name: 'Nuevo Insumo / Materia Prima',
-      inci: 'Inci Name',
-      matrixPrice: 50.0,
-      matrixQty: 100,
+      name: '',
+      inci: '',
+      matrixPrice: 0,
+      matrixQty: 1,
       matrixUnit: 'g',
-      formulaQty: 10,
+      formulaQty: 0,
       formulaUnit: 'g'
     };
     setIngredients([...ingredients, newIng]);
@@ -121,8 +136,8 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
   const addPackagingItem = () => {
     const newPkg = {
       id: Date.now().toString(),
-      name: 'Componente Packaging (Envase/Etiqueta)',
-      priceUnit: 1.50,
+      name: '',
+      priceUnit: 0,
       qtyPerProduct: 1
     };
     setPackaging([...packaging, newPkg]);
@@ -143,6 +158,10 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
 
   // Save handler
   const handleSave = () => {
+    if (!formulaName.trim()) {
+      alert('Por favor ingresa un nombre para tu formulación antes de guardar.');
+      return;
+    }
     const formulaPayload = {
       id: loadedFormula?.id || `formula-${Date.now()}`,
       name: formulaName,
@@ -180,11 +199,19 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
               Calculadora de Costo por Lote & Punto de Equilibrio
             </h1>
             <p className="text-slate-300 text-sm mt-1 max-w-2xl">
-              Cálculo instantáneo sin desfase. Conversión de unidades ($g, Kg, ml, L, gotas$), prorrateo de packaging, mano de obra ($MOD$), mermas ($FM$) y costos indirectos ($CIF$).
+              Cálculo reactivo desde cero. Ingresa tus propios materiales, unidades ($g, Kg, ml, L, gotas$), empaques y costos operativos.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <button
+              onClick={resetToCleanState}
+              className="px-3.5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 flex items-center gap-1.5 transition-all"
+              title="Limpiar campos e iniciar desde cero"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Limpiar Formulario</span>
+            </button>
             <button
               onClick={handleSave}
               className="px-5 py-3 rounded-2xl bg-sage-600 hover:bg-sage-700 text-white font-bold text-xs sm:text-sm shadow-lg flex items-center gap-2 transition-all"
@@ -202,11 +229,11 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
           </div>
         </div>
 
-        {/* Preset Selector */}
+        {/* Optional Presets Bar */}
         <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="w-full sm:w-auto flex items-center gap-2 text-xs text-slate-300 font-semibold">
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>Cargar Plantilla Preconfigurada:</span>
+            <span>¿Deseas cargar una plantilla de ejemplo?</span>
           </div>
           <div className="w-full sm:w-auto flex flex-wrap gap-2">
             {PRESET_FORMULAS.map(p => (
@@ -215,7 +242,7 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
                 onClick={() => handlePresetSelect(p.id)}
                 className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/15 transition-all truncate"
               >
-                {p.name.split(' ')[0]} {p.name.split(' ')[1]}
+                Cargar {p.name.split(' ')[0]} {p.name.split(' ')[1]}
               </button>
             ))}
           </div>
@@ -247,6 +274,7 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
                 <label className="block text-xs font-bold text-slate-700 mb-1">Nombre de la Formulación</label>
                 <input
                   type="text"
+                  placeholder="Ej. Mi Sérum Hidratante Facial"
                   value={formulaName}
                   onChange={(e) => setFormulaName(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sage-500"
@@ -258,7 +286,8 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
                 <input
                   type="number"
                   min="1"
-                  value={batchUnits}
+                  placeholder="Ej. 10"
+                  value={batchUnits || ''}
                   onChange={(e) => setBatchUnits(Math.max(1, parseInt(e.target.value) || 1))}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sage-500"
                 />
@@ -291,7 +320,8 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
                   type="number"
                   step="0.5"
                   min="0"
-                  value={hoursLote}
+                  placeholder="0"
+                  value={hoursLote || ''}
                   onChange={(e) => setHoursLote(Math.max(0, parseFloat(e.target.value) || 0))}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sage-500"
                 />
@@ -303,7 +333,8 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
                   type="number"
                   step="1"
                   min="0"
-                  value={hourlyRate}
+                  placeholder="0"
+                  value={hourlyRate || ''}
                   onChange={(e) => setHourlyRate(Math.max(0, parseFloat(e.target.value) || 0))}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sage-500"
                 />
@@ -315,7 +346,8 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
                   type="number"
                   step="5"
                   min="0"
-                  value={cifLote}
+                  placeholder="0"
+                  value={cifLote || ''}
                   onChange={(e) => setCifLote(Math.max(0, parseFloat(e.target.value) || 0))}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sage-500"
                 />
@@ -328,11 +360,12 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
                 type="number"
                 step="50"
                 min="0"
-                value={fixedMonthlyCosts}
+                placeholder="0"
+                value={fixedMonthlyCosts || ''}
                 onChange={(e) => setFixedMonthlyCosts(Math.max(0, parseFloat(e.target.value) || 0))}
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sage-500"
               />
-              <span className="text-[10px] text-slate-400">Usado para calcular el Punto de Equilibrio mensual (Alquiler, luz, agua, licencias)</span>
+              <span className="text-[10px] text-slate-400">Usado para calcular el Punto de Equilibrio mensual (Alquiler, servicios, licencias)</span>
             </div>
           </div>
 
@@ -341,7 +374,7 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h2 className="text-base font-bold text-charcoal-900 flex items-center gap-2">
                 <Layers className="w-5 h-5 text-sage-600" />
-                <span>2. Materias Primas e Insumos Activos</span>
+                <span>2. Materias Primas e Insumos Activos ({ingredients.length})</span>
               </h2>
               <button
                 onClick={addIngredient}
@@ -352,112 +385,130 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
               </button>
             </div>
 
-            <div className="space-y-4">
-              {ingredients.map((ing, idx) => (
-                <div 
-                  key={ing.id}
-                  className="p-4 rounded-2xl bg-linen-50/70 border border-slate-200/80 space-y-3 relative group"
+            {ingredients.length === 0 ? (
+              <div className="text-center py-8 border-2 border-dashed border-slate-200 rounded-2xl space-y-2">
+                <p className="text-xs font-semibold text-slate-500">No hay materias primas agregadas</p>
+                <p className="text-[11px] text-slate-400">Haz clic en <strong>"+ Añadir Insumo"</strong> para comenzar a ingresar tus ingredientes.</p>
+                <button
+                  onClick={addIngredient}
+                  className="mt-1 px-3 py-1.5 rounded-xl bg-sage-600 text-white text-xs font-bold shadow-sm"
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-sage-700 bg-sage-100 px-2 py-0.5 rounded-full">
-                      Ingrediente #{idx + 1}
-                    </span>
-                    <button
-                      onClick={() => removeIngredient(ing.id)}
-                      className="text-slate-400 hover:text-red-500 transition-colors p-1"
-                      title="Eliminar insumo"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-600 mb-0.5">Nombre Comercial</label>
-                      <input
-                        type="text"
-                        value={ing.name}
-                        onChange={(e) => updateIngredient(ing.id, 'name', e.target.value)}
-                        className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-800"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-600 mb-0.5">Nomenclatura INCI</label>
-                      <input
-                        type="text"
-                        value={ing.inci}
-                        onChange={(e) => updateIngredient(ing.id, 'inci', e.target.value)}
-                        className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs font-mono text-slate-700"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Matrix Purchase & Formula Usage */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-slate-200/60">
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-500">Precio Compra Matriz ($Bs.$)</label>
-                      <input
-                        type="number"
-                        step="0.5"
-                        value={ing.matrixPrice}
-                        onChange={(e) => updateIngredient(ing.id, 'matrixPrice', parseFloat(e.target.value) || 0)}
-                        className="w-full bg-white border border-slate-300 rounded-lg p-1.5 text-xs font-bold text-slate-900"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-500">Cant. Compra Matriz</label>
-                      <div className="flex gap-1">
-                        <input
-                          type="number"
-                          value={ing.matrixQty}
-                          onChange={(e) => updateIngredient(ing.id, 'matrixQty', parseFloat(e.target.value) || 0)}
-                          className="w-1/2 bg-white border border-slate-300 rounded-lg p-1.5 text-xs font-bold text-slate-900"
-                        />
-                        <select
-                          value={ing.matrixUnit}
-                          onChange={(e) => updateIngredient(ing.id, 'matrixUnit', e.target.value)}
-                          className="w-1/2 bg-white border border-slate-300 rounded-lg p-1 text-[11px] font-semibold text-slate-800"
-                        >
-                          {Object.keys(UNIT_CONVERSIONS).map(u => (
-                            <option key={u} value={u}>{u}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-500">Cant. Usada en Fórmula</label>
-                      <div className="flex gap-1">
-                        <input
-                          type="number"
-                          step="0.1"
-                          value={ing.formulaQty}
-                          onChange={(e) => updateIngredient(ing.id, 'formulaQty', parseFloat(e.target.value) || 0)}
-                          className="w-1/2 bg-white border border-slate-300 rounded-lg p-1.5 text-xs font-bold text-slate-900"
-                        />
-                        <select
-                          value={ing.formulaUnit}
-                          onChange={(e) => updateIngredient(ing.id, 'formulaUnit', e.target.value)}
-                          className="w-1/2 bg-white border border-slate-300 rounded-lg p-1 text-[11px] font-semibold text-slate-800"
-                        >
-                          {Object.keys(UNIT_CONVERSIONS).map(u => (
-                            <option key={u} value={u}>{u}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-right">
-                      <span className="block text-[9px] font-bold text-slate-400">Costo Insumo Lote</span>
-                      <span className="text-xs font-black text-sage-700">
-                        {formatBs(results.evaluatedIngredients[idx]?.itemCost || 0)}
+                  + Añadir Primer Insumo
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {ingredients.map((ing, idx) => (
+                  <div 
+                    key={ing.id}
+                    className="p-4 rounded-2xl bg-linen-50/70 border border-slate-200/80 space-y-3 relative group"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-sage-700 bg-sage-100 px-2 py-0.5 rounded-full">
+                        Ingrediente #{idx + 1}
                       </span>
+                      <button
+                        onClick={() => removeIngredient(ing.id)}
+                        className="text-slate-400 hover:text-red-500 transition-colors p-1"
+                        title="Eliminar insumo"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
-                  </div>
 
-                </div>
-              ))}
-            </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-600 mb-0.5">Nombre Comercial</label>
+                        <input
+                          type="text"
+                          placeholder="Ej. Aceite de Coco / Agua Desmineralizada"
+                          value={ing.name}
+                          onChange={(e) => updateIngredient(ing.id, 'name', e.target.value)}
+                          className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-800"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-600 mb-0.5">Nomenclatura INCI</label>
+                        <input
+                          type="text"
+                          placeholder="Ej. Cocos Nucifera Oil / Aqua"
+                          value={ing.inci}
+                          onChange={(e) => updateIngredient(ing.id, 'inci', e.target.value)}
+                          className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs font-mono text-slate-700"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Matrix Purchase & Formula Usage */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-slate-200/60">
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500">Precio Compra Matriz ($Bs.$)</label>
+                        <input
+                          type="number"
+                          step="0.5"
+                          placeholder="0"
+                          value={ing.matrixPrice || ''}
+                          onChange={(e) => updateIngredient(ing.id, 'matrixPrice', parseFloat(e.target.value) || 0)}
+                          className="w-full bg-white border border-slate-300 rounded-lg p-1.5 text-xs font-bold text-slate-900"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500">Cant. Compra Matriz</label>
+                        <div className="flex gap-1">
+                          <input
+                            type="number"
+                            placeholder="1"
+                            value={ing.matrixQty || ''}
+                            onChange={(e) => updateIngredient(ing.id, 'matrixQty', parseFloat(e.target.value) || 0)}
+                            className="w-1/2 bg-white border border-slate-300 rounded-lg p-1.5 text-xs font-bold text-slate-900"
+                          />
+                          <select
+                            value={ing.matrixUnit}
+                            onChange={(e) => updateIngredient(ing.id, 'matrixUnit', e.target.value)}
+                            className="w-1/2 bg-white border border-slate-300 rounded-lg p-1 text-[11px] font-semibold text-slate-800"
+                          >
+                            {Object.keys(UNIT_CONVERSIONS).map(u => (
+                              <option key={u} value={u}>{u}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500">Cant. Usada en Fórmula</label>
+                        <div className="flex gap-1">
+                          <input
+                            type="number"
+                            step="0.1"
+                            placeholder="0"
+                            value={ing.formulaQty || ''}
+                            onChange={(e) => updateIngredient(ing.id, 'formulaQty', parseFloat(e.target.value) || 0)}
+                            className="w-1/2 bg-white border border-slate-300 rounded-lg p-1.5 text-xs font-bold text-slate-900"
+                          />
+                          <select
+                            value={ing.formulaUnit}
+                            onChange={(e) => updateIngredient(ing.id, 'formulaUnit', e.target.value)}
+                            className="w-1/2 bg-white border border-slate-300 rounded-lg p-1 text-[11px] font-semibold text-slate-800"
+                          >
+                            {Object.keys(UNIT_CONVERSIONS).map(u => (
+                              <option key={u} value={u}>{u}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-right">
+                        <span className="block text-[9px] font-bold text-slate-400">Costo Insumo Lote</span>
+                        <span className="text-xs font-black text-sage-700">
+                          {formatBs(results.evaluatedIngredients[idx]?.itemCost || 0)}
+                        </span>
+                      </div>
+                    </div>
+
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Dynamic Packaging Section */}
@@ -465,7 +516,7 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h2 className="text-base font-bold text-charcoal-900 flex items-center gap-2">
                 <Box className="w-5 h-5 text-clay-600" />
-                <span>3. Componentes de Packaging y Envase ($CP$)</span>
+                <span>3. Componentes de Packaging y Envase ($CP$) ({packaging.length})</span>
               </h2>
               <button
                 onClick={addPackagingItem}
@@ -476,34 +527,49 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
               </button>
             </div>
 
-            <div className="space-y-3">
-              {packaging.map((pkg) => (
-                <div key={pkg.id} className="flex items-center gap-3 p-3 rounded-2xl bg-linen-50 border border-slate-200">
-                  <input
-                    type="text"
-                    value={pkg.name}
-                    onChange={(e) => updatePackagingItem(pkg.id, 'name', e.target.value)}
-                    className="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-800"
-                  />
-                  <div className="w-28 flex items-center gap-1">
-                    <span className="text-xs font-bold text-slate-400">Bs.</span>
+            {packaging.length === 0 ? (
+              <div className="text-center py-6 border-2 border-dashed border-slate-200 rounded-2xl space-y-2">
+                <p className="text-xs font-semibold text-slate-500">No hay elementos de packaging agregados</p>
+                <p className="text-[11px] text-slate-400">Agrega frascos, tapas, etiquetas o cajas secundarias.</p>
+                <button
+                  onClick={addPackagingItem}
+                  className="mt-1 px-3 py-1.5 rounded-xl bg-clay-500 text-white text-xs font-bold shadow-sm"
+                >
+                  + Añadir Primer Empaque
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {packaging.map((pkg) => (
+                  <div key={pkg.id} className="flex items-center gap-3 p-3 rounded-2xl bg-linen-50 border border-slate-200">
                     <input
-                      type="number"
-                      step="0.10"
-                      value={pkg.priceUnit}
-                      onChange={(e) => updatePackagingItem(pkg.id, 'priceUnit', parseFloat(e.target.value) || 0)}
-                      className="w-full bg-white border border-slate-300 rounded-xl px-2 py-1.5 text-xs font-bold text-slate-900"
+                      type="text"
+                      placeholder="Ej. Frasco Gotero de Vidrio 30ml / Etiqueta Frontal"
+                      value={pkg.name}
+                      onChange={(e) => updatePackagingItem(pkg.id, 'name', e.target.value)}
+                      className="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-800"
                     />
+                    <div className="w-28 flex items-center gap-1">
+                      <span className="text-xs font-bold text-slate-400">Bs.</span>
+                      <input
+                        type="number"
+                        step="0.10"
+                        placeholder="0.00"
+                        value={pkg.priceUnit || ''}
+                        onChange={(e) => updatePackagingItem(pkg.id, 'priceUnit', parseFloat(e.target.value) || 0)}
+                        className="w-full bg-white border border-slate-300 rounded-xl px-2 py-1.5 text-xs font-bold text-slate-900"
+                      />
+                    </div>
+                    <button
+                      onClick={() => removePackagingItem(pkg.id)}
+                      className="text-slate-400 hover:text-red-500 transition-colors p-1"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => removePackagingItem(pkg.id)}
-                    className="text-slate-400 hover:text-red-500 transition-colors p-1"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
@@ -652,7 +718,7 @@ export default function CostCalculatorModule({ onSaveFormula, loadedFormula }) {
       {/* Technical Sheet Modal */}
       {showTechSheet && (
         <TechnicalSheetModal
-          formulaName={formulaName}
+          formulaName={formulaName || 'Formulación Cosmética'}
           subsector={subsector}
           batchUnits={batchUnits}
           results={results}

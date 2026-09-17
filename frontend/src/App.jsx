@@ -26,40 +26,29 @@ export default function App() {
     return localStorage.getItem('mypim_token') || null;
   });
 
-  // Brand Profile State
+  // Brand Profile State - Inicia Limpio desde cero
   const [brandProfile, setBrandProfile] = useState(() => {
     const saved = localStorage.getItem('mypim_brand_profile');
     return saved ? JSON.parse(saved) : {
-      name: 'BioCosmética Bolivia S.R.L.',
-      founder: 'María Rene Aguilera',
+      name: '',
+      founder: '',
       city: 'Santa Cruz de la Sierra',
       subsector: 'SR-01 Cosmética Natural',
-      phone: '+591 78901234',
-      email: 'contacto@biocosmetica.bo'
+      phone: '',
+      email: ''
     };
   });
 
-  // Saved Formulas State
+  // Saved Formulas State - Inicia Vacío desde cero
   const [savedFormulas, setSavedFormulas] = useState(() => {
     const saved = localStorage.getItem('mypim_saved_formulas');
-    if (saved) {
-      return JSON.parse(saved);
-    }
-    return PRESET_FORMULAS.map(p => ({
-      ...p,
-      costingResults: {
-        cup: p.cifLote > 30 ? 16.50 : 6.20,
-        pvpRetail: p.cifLote > 30 ? 42.00 : 18.00,
-        safeRetailMargin: p.retailMargin,
-        breakEvenUnits: 120
-      }
-    }));
+    return saved ? JSON.parse(saved) : [];
   });
 
-  // Legal Checklist Completed Steps
+  // Legal Checklist Completed Steps - Inicia Vacío desde cero (0%)
   const [completedStepIds, setCompletedStepIds] = useState(() => {
     const saved = localStorage.getItem('mypim_legal_checklist');
-    return saved ? JSON.parse(saved) : ['seprec-1', 'seprec-2', 'sin-1', 'bpm-1'];
+    return saved ? JSON.parse(saved) : [];
   });
 
   // Active City & Subsector in Legal Route
@@ -132,7 +121,6 @@ export default function App() {
     }
     setSavedFormulas(updated);
 
-    // Sync to backend API asynchronously
     try {
       await fetch('http://localhost:5000/api/costing/formulas', {
         method: 'POST',

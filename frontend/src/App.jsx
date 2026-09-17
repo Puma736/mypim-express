@@ -3,13 +3,11 @@ import Header from './components/Header';
 import LandingHero from './components/LandingHero';
 import Dashboard from './components/Dashboard';
 import LegalRouteModule from './components/LegalRouteModule';
-import CostCalculatorModule from './components/CostCalculatorModule';
 import AcademyModule from './components/AcademyModule';
 import InciLabelGenerator from './components/InciLabelGenerator';
 import BrandProfileModal from './components/BrandProfileModal';
 import AuthModal from './components/AuthModal';
 import AdvisoryModal from './components/AdvisoryModal';
-import { PRESET_FORMULAS } from './utils/costingEngine';
 import { LEGAL_STEPS } from './utils/legalData';
 import { Heart, Sparkles, ShieldCheck } from 'lucide-react';
 
@@ -39,12 +37,6 @@ export default function App() {
     };
   });
 
-  // Saved Formulas State - Inicia Vacío desde cero
-  const [savedFormulas, setSavedFormulas] = useState(() => {
-    const saved = localStorage.getItem('mypim_saved_formulas');
-    return saved ? JSON.parse(saved) : [];
-  });
-
   // Legal Checklist Completed Steps - Inicia Vacío desde cero (0%)
   const [completedStepIds, setCompletedStepIds] = useState(() => {
     const saved = localStorage.getItem('mypim_legal_checklist');
@@ -54,9 +46,6 @@ export default function App() {
   // Active City & Subsector in Legal Route
   const [selectedCity, setSelectedCity] = useState('scz');
   const [selectedSubsector, setSelectedSubsector] = useState('SR-01');
-
-  // Currently loaded formula in calculator
-  const [loadedFormula, setLoadedFormula] = useState(null);
 
   // Modals
   const [showInciGenerator, setShowInciGenerator] = useState(false);
@@ -87,10 +76,6 @@ export default function App() {
   }, [brandProfile]);
 
   useEffect(() => {
-    localStorage.setItem('mypim_saved_formulas', JSON.stringify(savedFormulas));
-  }, [savedFormulas]);
-
-  useEffect(() => {
     localStorage.setItem('mypim_legal_checklist', JSON.stringify(completedStepIds));
   }, [completedStepIds]);
 
@@ -108,33 +93,6 @@ export default function App() {
     } else {
       setCompletedStepIds([...completedStepIds, stepId]);
     }
-  };
-
-  const handleSaveFormula = async (formulaData) => {
-    const existsIndex = savedFormulas.findIndex(f => f.id === formulaData.id);
-    let updated;
-    if (existsIndex >= 0) {
-      updated = [...savedFormulas];
-      updated[existsIndex] = formulaData;
-    } else {
-      updated = [formulaData, ...savedFormulas];
-    }
-    setSavedFormulas(updated);
-
-    try {
-      await fetch('http://localhost:5000/api/costing/formulas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formulaData)
-      });
-    } catch (e) {
-      // Quiet fail if server offline
-    }
-  };
-
-  const handleLoadFormulaToCalculator = (formula) => {
-    setLoadedFormula(formula);
-    setActiveTab('calculator');
   };
 
   const handleAuthSuccess = (userData, userToken) => {
@@ -174,9 +132,9 @@ export default function App() {
       <main className="flex-grow">
         {activeTab === 'landing' && (
           <LandingHero
-            onStartCalculator={() => setActiveTab('calculator')}
             onStartLegal={() => setActiveTab('legal')}
             onStartAcademy={() => setActiveTab('academy')}
+            onOpenAdvisory={() => setShowAdvisoryModal(true)}
           />
         )}
 
@@ -186,10 +144,9 @@ export default function App() {
             completedSteps={completedStepIds.length}
             totalSteps={totalLegalChecklist}
             formalizationPercentage={formalizationPercentage}
-            savedFormulas={savedFormulas}
             onNavigate={(tab) => setActiveTab(tab)}
-            onLoadFormula={handleLoadFormulaToCalculator}
             onOpenProfile={() => setShowProfileModal(true)}
+            onOpenAdvisory={() => setShowAdvisoryModal(true)}
           />
         )}
 
@@ -202,13 +159,6 @@ export default function App() {
             completedStepIds={completedStepIds}
             onToggleStep={handleToggleLegalStep}
             onOpenInciGenerator={() => setShowInciGenerator(true)}
-          />
-        )}
-
-        {activeTab === 'calculator' && (
-          <CostCalculatorModule
-            onSaveFormula={handleSaveFormula}
-            loadedFormula={loadedFormula}
           />
         )}
 
@@ -253,13 +203,13 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-white font-bold">
             <div className="w-6 h-6 rounded-lg bg-sage-500 flex items-center justify-center">
-              <Sparkles className="w-3.5 h-3.5 text-white" />
+              <ShieldCheck className="w-3.5 h-3.5 text-white" />
             </div>
-            <span>MY PIM EXPRESS — Cosmetics & Beauty Edition</span>
+            <span>MY PIM EXPRESS — Incubadora Legal Santa Cruz de la Sierra</span>
           </div>
 
           <p className="text-center md:text-left text-slate-400">
-            Hackatón <strong className="text-slate-200">HACKBIZ 2026</strong> — UAGRM (Santa Cruz, Bolivia). Enfoque de Triple Impacto.
+            Gestión de Trámites Legales • <strong className="text-slate-200">SEPREC | SIN | GAMSCZ | AGEMED</strong>
           </p>
 
           <div className="flex items-center gap-1 text-slate-400">

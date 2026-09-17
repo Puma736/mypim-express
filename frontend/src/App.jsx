@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import FloatingWhatsapp from './components/layout/FloatingWhatsapp';
 import LandingHero from './components/LandingHero';
 import Dashboard from './components/Dashboard';
+import OnboardingModule from './components/modules/onboarding/OnboardingModule';
 import LegalRouteModule from './components/LegalRouteModule';
+import CostCalculatorModule from './components/CostCalculatorModule';
 import AcademyModule from './components/AcademyModule';
+import MentoringModule from './components/modules/mentoring/MentoringModule';
+import ImpactMetricsModule from './components/modules/impact/ImpactMetricsModule';
 import InciLabelGenerator from './components/InciLabelGenerator';
 import BrandProfileModal from './components/BrandProfileModal';
 import AuthModal from './components/AuthModal';
 import AdvisoryModal from './components/AdvisoryModal';
 import { LEGAL_STEPS } from './utils/legalData';
-import { Heart, Sparkles, ShieldCheck } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('landing');
@@ -24,20 +29,28 @@ export default function App() {
     return localStorage.getItem('mypim_token') || null;
   });
 
-  // Brand Profile State - Inicia Limpio desde cero
+  // Brand Profile State
   const [brandProfile, setBrandProfile] = useState(() => {
     const saved = localStorage.getItem('mypim_brand_profile');
     return saved ? JSON.parse(saved) : {
       name: '',
       founder: '',
       city: 'Santa Cruz de la Sierra',
-      subsector: 'SR-01 Cosmética Natural',
+      subsector: 'SR-01',
+      salesChannel: 'Mercado Popular La Ramada (Santa Cruz)',
+      formalizationStage: 'Informal',
       phone: '',
       email: ''
     };
   });
 
-  // Legal Checklist Completed Steps - Inicia Vacío desde cero (0%)
+  // Saved Formulas State (Calculator)
+  const [savedFormulas, setSavedFormulas] = useState(() => {
+    const saved = localStorage.getItem('mypim_saved_formulas');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Legal Checklist Completed Steps
   const [completedStepIds, setCompletedStepIds] = useState(() => {
     const saved = localStorage.getItem('mypim_legal_checklist');
     return saved ? JSON.parse(saved) : [];
@@ -46,6 +59,9 @@ export default function App() {
   // Active City & Subsector in Legal Route
   const [selectedCity, setSelectedCity] = useState('scz');
   const [selectedSubsector, setSelectedSubsector] = useState('SR-01');
+
+  // Currently loaded formula in calculator
+  const [loadedFormula, setLoadedFormula] = useState(null);
 
   // Modals
   const [showInciGenerator, setShowInciGenerator] = useState(false);
@@ -76,6 +92,10 @@ export default function App() {
   }, [brandProfile]);
 
   useEffect(() => {
+    localStorage.setItem('mypim_saved_formulas', JSON.stringify(savedFormulas));
+  }, [savedFormulas]);
+
+  useEffect(() => {
     localStorage.setItem('mypim_legal_checklist', JSON.stringify(completedStepIds));
   }, [completedStepIds]);
 
@@ -93,6 +113,33 @@ export default function App() {
     } else {
       setCompletedStepIds([...completedStepIds, stepId]);
     }
+  };
+
+  const handleSaveFormula = async (formulaData) => {
+    const existsIndex = savedFormulas.findIndex(f => f.id === formulaData.id);
+    let updated;
+    if (existsIndex >= 0) {
+      updated = [...savedFormulas];
+      updated[existsIndex] = formulaData;
+    } else {
+      updated = [formulaData, ...savedFormulas];
+    }
+    setSavedFormulas(updated);
+
+    try {
+      await fetch('http://localhost:5000/api/costing/formulas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formulaData)
+      });
+    } catch (e) {
+      // Quiet fail if server offline
+    }
+  };
+
+  const handleLoadFormulaToCalculator = (formula) => {
+    setLoadedFormula(formula);
+    setActiveTab('calculator');
   };
 
   const handleAuthSuccess = (userData, userToken) => {
@@ -114,10 +161,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#FDFBF7] text-[#1F2937]">
+    <div className="min-h-screen flex flex-col justify-between bg-[#FAFAF9] text-[#1C1917] font-sans selection:bg-emerald-500 selection:text-white">
       
       {/* Top Navbar */}
-      <Header
+      <Navbar
         user={user}
         brandProfile={brandProfile}
         formalizationPercentage={formalizationPercentage}
@@ -135,6 +182,14 @@ export default function App() {
             onStartLegal={() => setActiveTab('legal')}
             onStartAcademy={() => setActiveTab('academy')}
             onOpenAdvisory={() => setShowAdvisoryModal(true)}
+          />
+        )}
+
+        {activeTab === 'onboarding' && (
+          <OnboardingModule
+            brandProfile={brandProfile}
+            onSaveProfile={(updated) => setBrandProfile(updated)}
+            onFinishOnboarding={() => setActiveTab('legal')}
           />
         )}
 
@@ -162,10 +217,31 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'calculator' && (
+          <CostCalculatorModule
+            onSaveFormula={handleSaveFormula}
+            loadedFormula={loadedFormula}
+          />
+        )}
+
         {activeTab === 'academy' && (
           <AcademyModule />
         )}
+
+        {activeTab === 'mentoring' && (
+          <MentoringModule
+            brandProfile={brandProfile}
+            formalizationPercentage={formalizationPercentage}
+          />
+        )}
+
+        {activeTab === 'impact' && (
+          <ImpactMetricsModule />
+        )}
       </main>
+
+      {/* Floating WhatsApp Button */}
+      <FloatingWhatsapp brandProfile={brandProfile} />
 
       {/* Modals */}
       {showInciGenerator && (
@@ -199,26 +275,7 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <footer className="bg-charcoal-900 text-slate-400 py-8 border-t border-slate-800 text-xs no-print">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-white font-bold">
-            <div className="w-6 h-6 rounded-lg bg-sage-500 flex items-center justify-center">
-              <ShieldCheck className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span>MY PIM EXPRESS — Incubadora Legal Santa Cruz de la Sierra</span>
-          </div>
-
-          <p className="text-center md:text-left text-slate-400">
-            Gestión de Trámites Legales • <strong className="text-slate-200">SEPREC | SIN | GAMSCZ | AGEMED</strong>
-          </p>
-
-          <div className="flex items-center gap-1 text-slate-400">
-            <span>Desarrollado con</span>
-            <Heart className="w-3.5 h-3.5 text-clay-500 fill-clay-500" />
-            <span>para emprendedores bolivianos</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );

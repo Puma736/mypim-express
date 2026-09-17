@@ -17,58 +17,45 @@ const INCUBATOR_LESSONS = [
     category: 'Formalización Comercial',
     title: 'Paso 1: Matrícula de Comercio en SEPREC',
     readTime: '3 min',
-    summary: 'Cómo obtener el reconocimiento legal como Empresa Unipersonal o SRL en Santa Cruz de la Sierra.',
-    content: `
-### ¿Qué es el registro en SEPREC?
-El Servicio Plurinacional del Registro de Comercio (SEPREC) es la entidad oficial donde se otorga la Matrícula de Comercio para operar legalmente en Bolivia.
-
-#### Pasos de Gestión:
-1. **Verificación de Homonimia:** Comprobar que el nombre comercial (ej. *BioCosmética Bolivia*) no esté registrado previamente.
-2. **Carga de Documentación:** Cédula de Identidad y definición del objeto social.
-3. **Obtención de Matrícula Digital:** Pago de arancel oficial (Bs. 260 Unipersonal / Bs. 455 SRL).
-
-> **Nuestra Incubadora Gestiona:** Nos encargamos de todo el proceso de inscripción y reserva de nombre por ti.
-    `,
-    takeaway: 'La Matrícula SEPREC es el primer requisito legal para cualquier trámite posterior.'
+    summary: 'Obtén el reconocimiento legal como Empresa Unipersonal o SRL en Santa Cruz de la Sierra.',
+    description: 'El Servicio Plurinacional del Registro de Comercio (SEPREC) es la entidad oficial donde se otorga la Matrícula de Comercio para operar legalmente en Bolivia.',
+    steps: [
+      { title: 'Verificación de Homonimia', detail: 'Comprobamos que el nombre comercial deseado esté disponible en el sistema oficial.' },
+      { title: 'Carga de Documentación', detail: 'Presentación de Cédula de Identidad del titular y redacción del objeto social de la empresa.' },
+      { title: 'Matrícula Digital', detail: 'Pago de arancel oficial (Bs. 260 para Empresa Unipersonal / Bs. 455 para SRL) y emisión del certificado digital.' }
+    ],
+    incubatorSupport: 'Nuestra incubadora gestiona la verificación de nombre, armado de carpeta y presentación directa ante SEPREC.',
+    takeaway: 'La Matrícula SEPREC es el primer requisito legal indispensable para iniciar actividades en Bolivia.'
   },
   {
     id: 'incubation-2',
     category: 'Bioseguridad y Municipio',
-    title: 'Paso 2: Licencia Municipal en GAMSCZ & BPM',
+    title: 'Paso 2: Licencia Municipal GAMSCZ & BPM',
     readTime: '4 min',
-    summary: 'Requisitos de bioseguridad municipal para talleres artesanales y cabinas en Santa Cruz de la Sierra.',
-    content: `
-### Licencia de Funcionamiento en Santa Cruz de la Sierra
-El Gobierno Autónomo Municipal de Santa Cruz de la Sierra (GAMSCZ) inspecciona las condiciones higiénicas y ambientales del espacio productivo.
-
-#### Requisitos Básicos:
-1. **Extintor PQS de 6kg** e inspección de bioseguridad.
-2. **Superficies Lavables e Impermeables:** Azulejo, melamina sellada o acero inoxidable en el área de formulación.
-3. **Uso Obligatorio de EPP:** Mandil, barbijo quirúrgico y cofia para el personal.
-
-> **Nuestra Incubadora Gestiona:** Preparamos tu taller para la inspección municipal del GAMSCZ.
-    `,
-    takeaway: 'Las BPM Simplificadas garantizan que tu producto sea seguro y apto para registro ante AGEMED.'
+    summary: 'Adecuación de bioseguridad municipal para talleres artesanales y cabinas en Santa Cruz de la Sierra.',
+    description: 'El Gobierno Autónomo Municipal de Santa Cruz de la Sierra (GAMSCZ) realiza inspecciones ambientales y de bioseguridad para otorgar la Licencia de Funcionamiento.',
+    steps: [
+      { title: 'Seguridad Contra Incendios', detail: 'Instalación de extintor PQS de 6kg, botiquín de primeros auxilios y señalética de emergencia.' },
+      { title: 'Superficies Sanitarias Lavables', detail: 'Uso de mesas de acero inoxidable, azulejo o melamina sellada en el taller de formulación.' },
+      { title: 'Uso de EPP de Bioseguridad', detail: 'Implementación obligatoria de mandil blanco, barbijo quirúrgico, guantes de nitrilo y cofia.' }
+    ],
+    incubatorSupport: 'Preparamos tu taller o cabina para superar exitosamente la inspección de bioseguridad del GAMSCZ.',
+    takeaway: 'Las BPM Simplificadas garantizan un entorno limpio y seguro para tus productos.'
   },
   {
     id: 'incubation-3',
     category: 'Regulación Sanitaria AGEMED',
     title: 'Paso 3: Notificación Sanitaria Obligatoria (NSO)',
     readTime: '4 min',
-    summary: 'Normativa Andina CAN 516 / 833 para la comercialización legal de cosméticos en Bolivia.',
-    content: `
-### ¿Cómo funciona la Notificación NSO ante AGEMED?
-Bajo la normativa de la Comunidad Andina (CAN 516 y 833), los productos cosméticos no requieren Registro Sanitario complejo de medicina, sino la Notificación Sanitaria Obligatoria (NSO).
-
-#### Requisitos Clave:
-* **Fórmula Cualitativa 100% INCI** en orden decreciente.
-* **Patrocinio de Regente Farmacéutico acreditado.**
-* **Ensayos microbiológicos y organolépticos de laboratorio.**
-* **Proyecto de etiqueta con rotulado oficial.**
-
-> **Nuestra Incubadora Gestiona:** Contamos con Regente Farmacéutico en nuestro equipo para presentar tu carpeta a AGEMED.
-    `,
-    takeaway: 'La Notificación NSO te autoriza a vender legalmente en supermercados, farmacias y ferias de Bolivia.'
+    summary: 'Normativa Andina CAN 516 / 833 para la comercialización de cosméticos en Bolivia.',
+    description: 'Los cosméticos no requieren un registro farmacéutico complejo, sino la Notificación Sanitaria Obligatoria (NSO) reconocida en los países de la Comunidad Andina.',
+    steps: [
+      { title: 'Fórmula Cualitativa INCI', detail: 'Desglose del 100% de los ingredientes expresados en nomenclatura internacional INCI.' },
+      { title: 'Patrocinio de Regente Farmacéutico', detail: 'Firma y aval técnico otorgado por profesional químico farmacéutico acreditado.' },
+      { title: 'Ensayos Microbiológicos', detail: 'Pruebas de laboratorio para certificar la estabilidad y ausencia de contaminación.' }
+    ],
+    incubatorSupport: 'Disponemos de Regentes Farmacéuticos acreditados en nuestro equipo para tramitar tu carpeta NSO ante AGEMED.',
+    takeaway: 'La NSO te autoriza a vender legalmente en supermercados, farmacias y puntos de venta en Bolivia.'
   }
 ];
 
@@ -90,7 +77,7 @@ export default function AcademyModule() {
               Aprende el Proceso de Formalización
             </h1>
             <p className="text-slate-300 text-sm mt-1 max-w-2xl">
-              Microcápsulas informativas para entender cómo nuestra incubadora gestiona tus trámites legales ante SEPREC, SIN, GAMSCZ y AGEMED.
+              Información clara sobre cómo nuestra incubadora gestiona tus trámites legales ante SEPREC, SIN, GAMSCZ y AGEMED.
             </p>
           </div>
         </div>
@@ -152,10 +139,39 @@ export default function AcademyModule() {
             <h2 className="text-2xl font-black text-charcoal-900">{activeLesson.title}</h2>
           </div>
 
-          <div className="prose prose-slate max-w-none text-xs sm:text-sm leading-relaxed text-slate-700 whitespace-pre-line">
-            {activeLesson.content}
+          <p className="text-sm text-slate-700 leading-relaxed font-medium">
+            {activeLesson.description}
+          </p>
+
+          <div className="space-y-3">
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
+              Pasos del Proceso:
+            </h3>
+            <div className="space-y-2.5">
+              {activeLesson.steps.map((step, idx) => (
+                <div key={idx} className="p-4 rounded-2xl bg-linen-50 border border-slate-200/80 flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-sage-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                    {idx + 1}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-charcoal-900 text-xs sm:text-sm">{step.title}</h4>
+                    <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">{step.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
+          {/* Incubator Support Box */}
+          <div className="p-4 rounded-2xl bg-clay-50 border border-clay-200 text-clay-900 text-xs font-medium space-y-1">
+            <span className="font-bold text-clay-800 flex items-center gap-1.5">
+              <Building2 className="w-4 h-4 text-clay-600" />
+              <span>¿Cómo apoya nuestra incubadora?</span>
+            </span>
+            <p className="text-slate-700 leading-relaxed">{activeLesson.incubatorSupport}</p>
+          </div>
+
+          {/* Key Takeaway Box */}
           <div className="p-4 rounded-2xl bg-sage-50 border border-sage-200 text-sage-900 text-xs font-semibold flex items-center gap-3">
             <Sparkles className="w-5 h-5 text-sage-600 flex-shrink-0" />
             <div>

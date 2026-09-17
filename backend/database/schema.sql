@@ -2,6 +2,7 @@
 -- ESQUEMA RELACIONAL Y MOTOR REACTIVO EN TIEMPO REAL (PostgreSQL 15+)
 -- PLATAFORMA: MY PIM EXPRESS (EDICIÓN COSMÉTICA & BELLEZA)
 -- HACKATÓN HACKBIZ 2026 - UAGRM
+-- MUNICIPIO EXCLUSIVO: SANTA CRUZ DE LA SIERRA (GAMSCZ)
 -- =============================================================================
 
 BEGIN;
@@ -63,7 +64,8 @@ CREATE TABLE emprendimientos (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT chk_porcentaje_formalizacion CHECK (porcentaje_formalizacion BETWEEN 0.00 AND 100.00)
+    CONSTRAINT chk_porcentaje_formalizacion CHECK (porcentaje_formalizacion BETWEEN 0.00 AND 100.00),
+    CONSTRAINT chk_municipio_santa_cruz CHECK (municipio = 'Santa Cruz de la Sierra')
 );
 
 -- -----------------------------------------------------------------------------
@@ -198,7 +200,7 @@ CREATE INDEX idx_receta_packaging_receta ON receta_packaging(receta_id);
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
--- TRIGGER 1: trigger_update_timestamp (Mantenimiento automático de updated_at)
+-- TRIGGER 1: trigger_update_timestamp
 -- -----------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION fn_update_timestamp()
 RETURNS TRIGGER AS $$
@@ -208,29 +210,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_usuarios_timestamp
-BEFORE UPDATE ON usuarios
-FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
-
-CREATE TRIGGER trg_emprendimientos_timestamp
-BEFORE UPDATE ON emprendimientos
-FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
-
-CREATE TRIGGER trg_progreso_tramites_timestamp
-BEFORE UPDATE ON progreso_tramites
-FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
-
-CREATE TRIGGER trg_recetas_costeo_timestamp
-BEFORE UPDATE ON recetas_costeo
-FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
-
-CREATE TRIGGER trg_receta_ingredientes_timestamp
-BEFORE UPDATE ON receta_ingredientes
-FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
-
-CREATE TRIGGER trg_receta_packaging_timestamp
-BEFORE UPDATE ON receta_packaging
-FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+CREATE TRIGGER trg_usuarios_timestamp BEFORE UPDATE ON usuarios FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+CREATE TRIGGER trg_emprendimientos_timestamp BEFORE UPDATE ON emprendimientos FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+CREATE TRIGGER trg_progreso_tramites_timestamp BEFORE UPDATE ON progreso_tramites FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+CREATE TRIGGER trg_recetas_costeo_timestamp BEFORE UPDATE ON recetas_costeo FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+CREATE TRIGGER trg_receta_ingredientes_timestamp BEFORE UPDATE ON receta_ingredientes FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+CREATE TRIGGER trg_receta_packaging_timestamp BEFORE UPDATE ON receta_packaging FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
 
 -- -----------------------------------------------------------------------------
 -- HELPER FUNCTION: Conversión de unidades a base estándar (g / ml)
@@ -248,7 +233,7 @@ END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -- -----------------------------------------------------------------------------
--- TRIGGER 2: trigger_calcular_costeo_completo (Cálculo Cascada y Pub/Sub)
+-- TRIGGER 2: trigger_calcular_costeo_completo (Cálculo Cascada & Pub/Sub en vivo)
 -- -----------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION fn_recalcular_receta(p_receta_id UUID)
 RETURNS VOID AS $$
@@ -268,13 +253,10 @@ DECLARE
     v_pe_unidades INT := 0;
     v_pe_ingresos NUMERIC(12,4) := 0.0000;
 BEGIN
-    -- 1. Obtener cabecera de la receta
     SELECT * INTO v_receta FROM recetas_costeo WHERE id = p_receta_id;
-    IF NOT FOUND THEN
-        RETURN;
-    END IF;
+    IF NOT FOUND THEN RETURN; END IF;
 
-    -- 2. Recalcular e ingresar costo proporcional de cada ingrediente
+    -- Recalcular costo proporcional de cada ingrediente
     UPDATE receta_ingredientes ing
     SET costo_proporcional_calculado = 
         CASE 
@@ -285,36 +267,28 @@ BEGIN
         END
     WHERE ing.receta_id = p_receta_id;
 
-    -- 3. Sumar materia prima bruta y aplicar merma
-    SELECT COALESCE(SUM(costo_proporcional_calculado), 0.0000)
-    INTO v_costo_mp_bruto
-    FROM receta_ingredientes
-    WHERE receta_id = p_receta_id;
+    -- Sumar MP bruta y merma
+    SELECT COALESCE(SUM(costo_proporcional_calculado), 0.0000) INTO v_costo_mp_bruto
+    FROM receta_ingredientes WHERE receta_id = p_receta_id;
 
     v_costo_mp_con_merma := v_costo_mp_bruto * (1.0000 + (v_receta.porcentaje_merma / 100.00));
 
-    -- 4. Recalcular e ingresar costo de packaging por ítem
-    UPDATE receta_packaging
-    SET costo_total_item = costo_unitario * cantidad_por_lote
-    WHERE receta_id = p_receta_id;
+    -- Recalcular packaging
+    UPDATE receta_packaging SET costo_total_item = costo_unitario * cantidad_por_lote WHERE receta_id = p_receta_id;
 
-    SELECT COALESCE(SUM(costo_total_item), 0.0000)
-    INTO v_costo_packaging_total
-    FROM receta_packaging
-    WHERE receta_id = p_receta_id;
+    SELECT COALESCE(SUM(costo_total_item), 0.0000) INTO v_costo_packaging_total
+    FROM receta_packaging WHERE receta_id = p_receta_id;
 
-    -- 5. Calcular MOD y Costo Total del Lote
+    -- MOD y Total Lote
     v_costo_mod := v_receta.horas_mano_obra * v_receta.tarifa_hora_operario;
     v_costo_total_lote := v_costo_mp_con_merma + v_costo_packaging_total + v_costo_mod + v_receta.costos_indirectos_cif;
-    
-    -- 6. Costo Unitario de Producción (CUP)
     v_cup := v_costo_total_lote / GREATEST(1, v_receta.tamano_lote_unidades);
 
-    -- 7. Precios Sugeridos
+    -- Precios Sugeridos B2C y B2B
     v_pvp_retail := v_cup / (1.0000 - (LEAST(95.00, v_receta.margen_minorista_deseado) / 100.00));
     v_pvp_wholesale := v_cup / (1.0000 - (LEAST(95.00, v_receta.margen_mayorista_deseado) / 100.00));
 
-    -- 8. Punto de Equilibrio Mensual
+    -- Punto de Equilibrio
     v_cif_unidad := v_receta.costos_indirectos_cif / GREATEST(1, v_receta.tamano_lote_unidades);
     v_costo_var_sin_cif := v_cup - v_cif_unidad;
     v_margen_contribucion := v_pvp_retail - v_costo_var_sin_cif;
@@ -326,7 +300,7 @@ BEGIN
     END IF;
     v_pe_ingresos := v_pe_unidades * v_pvp_retail;
 
-    -- 9. Actualizar cabecera recetas_costeo (Desactivando temporalmente triggers de timestamp para evitar recursion)
+    -- Actualizar cabecera recetas_costeo
     UPDATE recetas_costeo
     SET 
         costo_materia_prima = v_costo_mp_con_merma,
@@ -339,7 +313,7 @@ BEGIN
         punto_equilibrio_ingresos_bs = v_pe_ingresos
     WHERE id = p_receta_id;
 
-    -- 10. NOTIFICACIÓN REACTIVA EN TIEMPO REAL (Pub/Sub para WebSockets)
+    -- NOTIFICACIÓN REACTIVA EN TIEMPO REAL (pg_notify)
     PERFORM pg_notify('receta_actualizada', json_build_object(
         'receta_id', p_receta_id,
         'costo_unitario', v_cup,
@@ -349,16 +323,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger sobre detalles (ingredientes y packaging)
 CREATE OR REPLACE FUNCTION fn_trg_recalcular_detalles()
 RETURNS TRIGGER AS $$
 DECLARE
     v_target_receta_id UUID;
 BEGIN
-    IF TG_OP = 'DELETE' THEN
-        v_target_receta_id := OLD.receta_id;
-    ELSE
-        v_target_receta_id := NEW.receta_id;
+    IF TG_OP = 'DELETE' THEN v_target_receta_id := OLD.receta_id;
+    ELSE v_target_receta_id := NEW.receta_id;
     END IF;
 
     PERFORM fn_recalcular_receta(v_target_receta_id);
@@ -366,13 +337,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_recalcular_ingredientes
-AFTER INSERT OR UPDATE OR DELETE ON receta_ingredientes
-FOR EACH ROW EXECUTE FUNCTION fn_trg_recalcular_detalles();
-
-CREATE TRIGGER trg_recalcular_packaging
-AFTER INSERT OR UPDATE OR DELETE ON receta_packaging
-FOR EACH ROW EXECUTE FUNCTION fn_trg_recalcular_detalles();
+CREATE TRIGGER trg_recalcular_ingredientes AFTER INSERT OR UPDATE OR DELETE ON receta_ingredientes FOR EACH ROW EXECUTE FUNCTION fn_trg_recalcular_detalles();
+CREATE TRIGGER trg_recalcular_packaging AFTER INSERT OR UPDATE OR DELETE ON receta_packaging FOR EACH ROW EXECUTE FUNCTION fn_trg_recalcular_detalles();
 
 -- -----------------------------------------------------------------------------
 -- TRIGGER 3: trigger_actualizar_progreso_legal
@@ -386,21 +352,14 @@ DECLARE
     v_total_completados INT := 0;
     v_porcentaje NUMERIC(5,2) := 0.00;
 BEGIN
-    IF TG_OP = 'DELETE' THEN
-        v_emp_id := OLD.emprendimiento_id;
-    ELSE
-        v_emp_id := NEW.emprendimiento_id;
+    IF TG_OP = 'DELETE' THEN v_emp_id := OLD.emprendimiento_id;
+    ELSE v_emp_id := NEW.emprendimiento_id;
     END IF;
 
-    -- Obtener subrubro del emprendimiento
     SELECT subrubro INTO v_subrubro FROM emprendimientos WHERE id = v_emp_id;
 
-    -- Contar trámites aplicables al subrubro
-    SELECT COUNT(*) INTO v_total_requeridos
-    FROM tramites_catalogo
-    WHERE v_subrubro = ANY(subrubros_aplicables);
+    SELECT COUNT(*) INTO v_total_requeridos FROM tramites_catalogo WHERE v_subrubro = ANY(subrubros_aplicables);
 
-    -- Contar trámites completados
     SELECT COUNT(*) INTO v_total_completados
     FROM progreso_tramites pt
     JOIN tramites_catalogo tc ON pt.tramite_id = tc.id
@@ -414,12 +373,8 @@ BEGIN
         v_porcentaje := 0.00;
     END IF;
 
-    -- Actualizar emprendimiento
-    UPDATE emprendimientos
-    SET porcentaje_formalizacion = v_porcentaje
-    WHERE id = v_emp_id;
+    UPDATE emprendimientos SET porcentaje_formalizacion = v_porcentaje WHERE id = v_emp_id;
 
-    -- Notificación en tiempo real
     PERFORM pg_notify('formalizacion_actualizada', json_build_object(
         'emprendimiento_id', v_emp_id,
         'porcentaje_formalizacion', v_porcentaje
@@ -429,19 +384,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_actualizar_progreso_legal
-AFTER INSERT OR UPDATE OR DELETE ON progreso_tramites
-FOR EACH ROW EXECUTE FUNCTION fn_actualizar_progreso_legal();
+CREATE TRIGGER trg_actualizar_progreso_legal AFTER INSERT OR UPDATE OR DELETE ON progreso_tramites FOR EACH ROW EXECUTE FUNCTION fn_actualizar_progreso_legal();
 
 -- =============================================================================
--- POBLADO INICIAL DEL CATÁLOGO LEGAL BOLIVIANO (SEPREC, SIN, GAM, BPM, AGEMED)
+-- POBLADO INICIAL DEL CATÁLOGO LEGAL (GAMSCZ SANTA CRUZ DE LA SIERRA)
 -- =============================================================================
-
 INSERT INTO tramites_catalogo (codigo, titulo, entidad, descripcion, costo_referencial_bs, subrubros_aplicables, orden_paso)
 VALUES
 ('SEPREC-01', 'Matrícula de Comercio Unipersonal / SRL', 'SEPREC', 'Obtención de Matrícula de Comercio Digital', 260.0000, ARRAY['SR-01_ARTESANAL', 'SR-02_DERMOCOSMETICA', 'SR-03_MAQUILLAJE', 'SR-04_CABINA']::subrubro_cosmetico_enum[], 1),
 ('SIN-01', 'Inscripción al NIT PBD-digital', 'Impuestos Nacionales', 'Obtención de NIT y habilitación de facturación SIAT', 0.0000, ARRAY['SR-01_ARTESANAL', 'SR-02_DERMOCOSMETICA', 'SR-03_MAQUILLAJE', 'SR-04_CABINA']::subrubro_cosmetico_enum[], 2),
-('GAM-01', 'Licencia de Funcionamiento Municipal', 'Alcaldía Municipal (SCZ/LP/CBBA/EA)', 'Inspección de bioseguridad y autorización municipal', 350.0000, ARRAY['SR-01_ARTESANAL', 'SR-02_DERMOCOSMETICA', 'SR-03_MAQUILLAJE', 'SR-04_CABINA']::subrubro_cosmetico_enum[], 3),
+('GAMSCZ-01', 'Licencia de Funcionamiento Municipal GAMSCZ', 'Alcaldía Municipal de Santa Cruz de la Sierra', 'Inspección de bioseguridad y autorización municipal GAMSCZ', 350.0000, ARRAY['SR-01_ARTESANAL', 'SR-02_DERMOCOSMETICA', 'SR-03_MAQUILLAJE', 'SR-04_CABINA']::subrubro_cosmetico_enum[], 3),
 ('BPM-01', 'Adecuación BPM Simplificadas de Taller', 'AGEMED / Estándar Técnico', 'Superficies lavables, EPP y agua desmineralizada', 400.0000, ARRAY['SR-01_ARTESANAL', 'SR-02_DERMOCOSMETICA', 'SR-03_MAQUILLAJE']::subrubro_cosmetico_enum[], 4),
 ('AGEMED-01', 'Notificación Sanitaria Obligatoria (NSO CAN 516/833)', 'AGEMED', 'Tramitación de NSO cosmética con Regente Farmacéutico', 1500.0000, ARRAY['SR-01_ARTESANAL', 'SR-02_DERMOCOSMETICA', 'SR-03_MAQUILLAJE']::subrubro_cosmetico_enum[], 5),
 ('INCI-01', 'Ficha y Estándar de Rotulado e INCI', 'AGEMED / Norma Técnica', 'Verificación de fórmula cualitativa y advertencias en etiqueta', 100.0000, ARRAY['SR-01_ARTESANAL', 'SR-02_DERMOCOSMETICA', 'SR-03_MAQUILLAJE']::subrubro_cosmetico_enum[], 6)

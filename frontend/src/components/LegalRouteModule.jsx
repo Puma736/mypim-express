@@ -11,8 +11,8 @@ import {
   ChevronDown, 
   ChevronUp, 
   Printer, 
-  ExternalLink,
-  Award
+  Award,
+  MapPin
 } from 'lucide-react';
 import { 
   LEGAL_STEPS, 
@@ -32,7 +32,7 @@ export default function LegalRouteModule({
 }) {
   const [openStepId, setOpenStepId] = useState('step-seprec');
 
-  const selectedCityObj = CITIES.find(c => c.id === selectedCity) || CITIES[0];
+  const selectedCityObj = CITIES[0]; // Santa Cruz de la Sierra (GAMSCZ)
   const selectedSubsectorObj = SUBSECTORS.find(s => s.id === selectedSubsector) || SUBSECTORS[0];
 
   // Calculate completion percentage
@@ -65,13 +65,13 @@ export default function LegalRouteModule({
           <div>
             <div className="flex items-center gap-2 text-sage-300 text-xs font-bold uppercase tracking-wider mb-1">
               <ShieldCheck className="w-4 h-4" />
-              <span>RegTech Bolivia • Módulo 1</span>
+              <span>RegTech Santa Cruz de la Sierra • GAMSCZ & AGEMED</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
               Ruta Legal & Notificación Sanitaria AGEMED
             </h1>
             <p className="text-slate-300 text-sm mt-1 max-w-2xl">
-              Paso a paso ordenado para formalizar tu microempresa cosmética bajo la normativa boliviana y Decisiones de la Comunidad Andina (CAN 516 / 833).
+              Paso a paso ordenado para formalizar tu microempresa cosmética en Santa Cruz de la Sierra bajo la normativa boliviana y Decisiones de la Comunidad Andina (CAN 516 / 833).
             </p>
           </div>
 
@@ -93,21 +93,16 @@ export default function LegalRouteModule({
           </div>
         </div>
 
-        {/* Selectors: City & Subsector */}
+        {/* Municipality Badge & Subsector Selector */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/10">
           <div>
             <label className="block text-xs font-bold text-slate-300 mb-1.5">
-              1. Selecciona tu Ciudad / Alcaldía Municipal (GAM):
+              1. Municipio Enfoque Exclusivo:
             </label>
-            <select
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-xs sm:text-sm font-semibold focus:outline-none focus:border-sage-400"
-            >
-              {CITIES.map(c => (
-                <option key={c.id} value={c.id}>{c.name} ({c.gamName})</option>
-              ))}
-            </select>
+            <div className="w-full bg-slate-800/90 border border-sage-500/40 rounded-xl px-3.5 py-2.5 text-white text-xs sm:text-sm font-semibold flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-clay-400" />
+              <span>Santa Cruz de la Sierra (GAMSCZ)</span>
+            </div>
           </div>
 
           <div>
@@ -162,7 +157,7 @@ export default function LegalRouteModule({
       {/* Interactive Accordion Steps */}
       <div id="printable-area" className="space-y-4">
         <h2 className="text-xl font-bold text-charcoal-900 px-1">
-          Etapas Secuenciales de la Ruta Legal
+          Etapas Secuenciales de la Ruta Legal (Santa Cruz de la Sierra)
         </h2>
 
         {LEGAL_STEPS.map((step, idx) => {
@@ -277,7 +272,7 @@ export default function LegalRouteModule({
                   {/* Expert Tip Box */}
                   <div className="p-4 rounded-2xl bg-sage-50 border border-sage-200 text-xs text-sage-900 font-medium flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-sage-600 flex-shrink-0" />
-                    <span><strong>Tip para Bolivia:</strong> {step.tips}</span>
+                    <span><strong>Tip para Santa Cruz de la Sierra:</strong> {step.tips}</span>
                   </div>
 
                   {/* Special CTA for INCI step */}

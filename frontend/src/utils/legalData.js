@@ -1,15 +1,17 @@
 /**
  * Ruta Legal Boliviana & Notificación Sanitaria AGEMED / CAN 516 & 833
  * Módulo de RegTech para Cosmética y Estética en Bolivia - HACKBIZ 2026
+ * Enfoque Exclusivo: Santa Cruz de la Sierra (GAMSCZ)
  */
 
 export const LEGAL_DISCLAIMER = `DISCLAIMER LEGAL OBLIGATORIO: La plataforma My PiM Express provee orientación metodológica, educativa y checklists normativos basados en la legislación boliviana y decisiones de la Comunidad Andina (CAN 516 / 833). Esta guía no sustituye la representación legal profesional, el patrocinio de un Regente Farmacéutico acreditado ni los ensayos fisicoquímicos / microbiológicos exigidos oficialmente por la Agencia Estatal de Medicamentos y Tecnologías en Salud (AGEMED).`;
 
 export const CITIES = [
-  { id: 'scz', name: 'Santa Cruz de la Sierra', gamName: 'Gobierno Autónomo Municipal de Santa Cruz de la Sierra (GAMSCZ)' },
-  { id: 'lp', name: 'La Paz', gamName: 'Gobierno Autónomo Municipal de La Paz (GAMLP)' },
-  { id: 'cbba', name: 'Cochabamba', gamName: 'Gobierno Autónomo Municipal de Cochabamba (GAMC)' },
-  { id: 'elalto', name: 'El Alto', gamName: 'Gobierno Autónomo Municipal de El Alto (GAMEA)' }
+  { 
+    id: 'scz', 
+    name: 'Santa Cruz de la Sierra', 
+    gamName: 'Gobierno Autónomo Municipal de Santa Cruz de la Sierra (GAMSCZ)' 
+  }
 ];
 
 export const SUBSECTORS = [
@@ -74,7 +76,7 @@ export const LEGAL_STEPS = [
     summary: 'Inscripción en el Padrón Nacional Biométrico Digital (PBD-digital) para emisión de facturas.',
     checklist: [
       { id: 'sin-1', text: 'Pre-inscripción en la oficina virtual de Impuestos Nacionales (SIAT).' },
-      { id: 'sin-2', text: 'Presentación de factura de luz del domicilio fiscal (taller o vivienda).' },
+      { id: 'sin-2', text: 'Presentación de factura de luz del domicilio fiscal (taller o vivienda en Santa Cruz).' },
       { id: 'sin-3', text: 'Croquis de ubicación del taller de producción o cabina de atención.' },
       { id: 'sin-4', text: 'Captura de huella dactilar y fotografía en plataforma del SIN.' },
       { id: 'sin-5', text: 'Habilitación de modalidad de facturación (Portal Web en Línea o Electrónica).' }
@@ -84,18 +86,18 @@ export const LEGAL_STEPS = [
   {
     id: 'step-gam',
     stage: '1. Comercial Base',
-    title: 'GAM: Licencia de Funcionamiento Municipal',
-    institution: 'Alcaldía Municipal (Santa Cruz, La Paz, Cochabamba, El Alto)',
+    title: 'GAMSCZ: Licencia de Funcionamiento Municipal',
+    institution: 'Gobierno Autónomo Municipal de Santa Cruz de la Sierra (GAMSCZ)',
     duration: '5 a 15 Días Hábiles',
     cost: 'Según zona comercial y metros cuadrados (Bs. 150 - 450 aprox.)',
-    summary: 'Autorización municipal para la apertura de taller de elaboración o cabina de belleza estética.',
+    summary: 'Autorización municipal para la apertura de taller de elaboración o cabina de belleza estética en Santa Cruz de la Sierra.',
     checklist: [
       { id: 'gam-1', text: 'Fotocopia de Matrícula SEPREC y NIT actualizado.' },
       { id: 'gam-2', text: 'Plano o croquis del espacio productivo / cabina con señalética básica de seguridad.' },
       { id: 'gam-3', text: 'Extintor de incendios (PQS 6kg) y botiquín de primeros auxilios inspeccionado.' },
-      { id: 'gam-4', text: 'Inspección de bioseguridad ambiental por técnicos de la Alcaldía.' }
+      { id: 'gam-4', text: 'Inspección de bioseguridad ambiental por técnicos de la Alcaldía de Santa Cruz de la Sierra.' }
     ],
-    tips: 'En Santa Cruz y La Paz el trámite de licencia para microempresas de bajo riesgo se realiza en línea.'
+    tips: 'En Santa Cruz de la Sierra el trámite de licencia para microempresas se gestiona en la Ventanilla Única del GAMSCZ.'
   },
   {
     id: 'step-bpm',
@@ -146,7 +148,7 @@ export const LEGAL_STEPS = [
       { id: 'inci-3', text: 'Contenido neto impreso en el sistema métrico decimal (g o ml).' },
       { id: 'inci-4', text: 'Número de Lote de producción (Ej: L-2026-001) y Fecha de Vencimiento / Caducidad.' },
       { id: 'inci-5', text: 'Código de Notificación Sanitaria Obligatoria (Ej: NSO-BO-XXXXX-XX).' },
-      { id: 'inci-6', text: 'Nombre o razón social del titular, ciudad y país de origen ("Hecho en Bolivia").' },
+      { id: 'inci-6', text: 'Nombre o razón social del titular y origen ("Hecho en Santa Cruz de la Sierra - Bolivia").' },
       { id: 'inci-7', text: 'Instrucciones de uso, precauciones y advertencias sanitarias de seguridad.' }
     ],
     tips: 'La nomenclatura INCI (International Nomenclature of Cosmetic Ingredients) es estándar mundial obligatorio.'

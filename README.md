@@ -1,204 +1,88 @@
-# My PiM Express (Cosmetics & Beauty Edition) - Especificación Funcional Completa
 
-**My PiM Express** es una plataforma web "Plataforma como Servicio" (SaaS) de orientación RegTech y consultoría financiera para microemprendedores en Bolivia, adaptada para la **Edición Especial de Cosmética, Dermocosmética, Maquillaje y Estética** (Hackatón **HACKBIZ 2026 - UAGRM**).
+# My PiM Express - Especificación Funcional (MVP)
 
----
+**My PiM Express** se desarrollará bajo una estrategia de "Plataforma como Servicio" (SaaS) educativa y de diagnóstico, diseñada específicamente para el contexto informal/formal de Bolivia. Esta plataforma no será solo una página web informativa; se convertirá en el primer consultor virtual interactivo de bolsillo para el ecosistema emprendedor del país.
 
-## 1. Descripción General del Proyecto
-Plataforma web orientada a emprendedores y formuladores artesanales de cosmética natural, dermocosmética y estética en Bolivia (Santa Cruz de la Sierra, La Paz, Cochabamba y El Alto).
-Centraliza en un solo lugar 3 grandes áreas:
-1. **Asesoría y Orientación Legal (RegTech)**: Ruta paso a paso para SEPREC, SIN (NIT), GAM (Alcaldía), BPM Simplificadas de Taller y Notificación Sanitaria Obligatoria (NSO) ante AGEMED bajo la normativa andina (Decisiones CAN 516 y 833).
-2. **Estructura y Análisis de Costos**: Motor reactivo de costeo por lote con mermas de producción (3%-8%), packaging, mano de obra ($MOD$), costos indirectos ($CIF$), $CUP$, $PVP$ $B2C/B2B$ y Punto de Equilibrio.
-3. **Educación Financiera y Contable**: Microcápsulas educativas (Sueldo del fundador vs. Ganancias, método PEPS para aceites e hidrolatos) y simulador interactivo de Combos y Kits de Belleza.
+A continuación, se detalla la estructura base unificada y accionable sobre la cual iniciaremos el desarrollo del proyecto, dividida en 4 grandes capas:
 
----
+## 1. Capa de Diseño (UX/UI y Enfoque Visual)
+El desarrollo visual priorizará la utilidad y la velocidad por encima de animaciones pesadas o elementos que distraigan.
 
-## 2. Objetivo de la Plataforma Web
-Permitir a un emprendedor cosmético:
-- Crear una cuenta personal y registrar su perfil de marca.
-- Seleccionar su subrubro técnico cosmético (`SR-01` a `SR-04`).
-- Monitorear su avance mediante el **Termómetro de Formalización Legal**.
-- Generar y previsualizar en vivo la **Ficha de Etiquetado e INCI** conforme a la norma de rotulado de AGEMED.
-- Calcular con cero desfase el costo por lote y precio sugerido en Bolivianos ($Bs.$).
-- Acceder a contenidos educativos de finanzas y simular kits de venta para ferias artesanales.
-- Guardar información en su catálogo local/servidor y exportar Fichas Técnicas de Costos en PDF.
+* **Diseño Mobile-First:** En Bolivia, la gran mayoría de los microemprendedores gestionan su día a día desde el celular. La interfaz debe priorizar pantallas verticales, botones grandes y textos legibles bajo el sol.
+* **Arquitectura Limpia:** La pantalla de inicio (Landing Page) será un embudo directo: explicación corta de la propuesta de valor -> botón gigante de "Crear Cuenta". Nada de menús infinitos.
+* **Micro-interacciones:** Elementos visuales que guíen al usuario de manera intuitiva (ej. barras de progreso en la guía legal o alertas de color verde/rojo en los resultados de la calculadora).
 
----
+## 2. Capa de Desarrollo Técnico (Sistemas y Base de Datos)
+Transformación del bosquejo en un sistema real e interactivo:
 
-## 3. Estructura General de la Página
+* **Base de Datos Relacional y Escalable:** Estructurada para guardar datos del usuario (perfil) vinculados a sus respuestas de forma eficiente. 
+  * *Ejemplo: Usuario A -> Rubro: Cafetería -> Paso legal actual: 2 -> Datos guardados en calculadora: [Variables financieras de su último intento].*
+* **Módulo de Autenticación Seguro:** Registro simple (idealmente con validación de correo o integración rápida con Google) que garantice la privacidad de los datos financieros del emprendimiento.
+* **Backend de Cálculo Dinámico:** Programar las funciones matemáticas de la calculadora de costos para que operen al instante cuando el usuario llene los campos.
+* **Panel de Administración (CMS):** Un sistema interno para que el equipo pueda subir, editar o actualizar las guías legales y las lecciones educativas sin necesidad de volver a programar la web.
 
-### Página Principal (Landing Page & Embudo)
-- **Cabecera**: Título *MY PIM EXPRESS (Cosmetics & Beauty Edition)*.
-- **Propuesta de Valor & Triple Impacto**:
-  - *Sostenibilidad*: Uso responsable de botánicos amazónicos/chiquitanos y control de mermas.
-  - *Empleo Juvenil y Femenino*: Valoración justa de mano de obra ($MOD$).
-  - *Formalización*: Orientación en trámites ante AGEMED y municipios.
-- **Sección "Acerca de Nosotros"**: Concepto del proyecto y visión Hackatón HACKBIZ 2026 UAGRM.
-- **Acceso Rápido**: Botones de "Iniciar Sesión", "Crear Cuenta" y acceso directo a la Calculadora de Costos.
+## 3. Capa de Contenido y Datos (Los Pendientes Técnicos)
+Esta es la "materia prima" de la plataforma. Para que la web funcione, se deben ejecutar tres mesas de trabajo en paralelo:
 
----
+* **Mesa Legal (Bolivia):** Definir los primeros 3 o 5 rubros piloto (ej. Gastronomía, Comercio Minorista, Servicios Digitales). Mapear la ruta exacta de formalización: SEPREC, Impuestos Nacionales (NIT), Licencias de Funcionamiento Municipales (adecuadas a alcaldías principales como Santa Cruz, La Paz o Cochabamba), patentes, costos reales en Bolivianos (Bs) y tiempos de espera.
+* **Mesa Financiera:** Validar las fórmulas matemáticas base. La calculadora necesitará como mínimo:
+  * **Inputs (Entradas):** Costos Fijos Mensuales, Costo Variable por Unidad, Precio de Venta Estimado.
+  * **Outputs (Resultados):** Margen de Utilidad, Punto de Equilibrio en Unidades/Dinero y Utilidad Neta Mensual Proyectada.
+* **Mesa Educativa:** Diseñar micro-contenido (píldoras de aprendizaje de máximo 3 minutos de lectura) adaptadas a la realidad boliviana (usando ejemplos locales como "la pensión de almuerzos", "la tienda de barrio" o "el taller de confección").
 
-## 4. Registro de Usuario y Perfil de Marca
+## 4. Capa de Negocio y Conectividad (El Futuro del Proyecto)
+Aunque el MVP es una guía automatizada, la plataforma esconde un potente canal de negocios:
 
-### Datos Personales
-- Nombre y Apellido del emprendedor / fundador.
-- Correo electrónico.
-- Número de Teléfono / WhatsApp.
-- Contraseña.
-
-### Datos Básicos del Emprendimiento Cosmético
-- Nombre comercial de la marca (ej: *BioCosmética Bolivia S.R.L.*).
-- Subrubro técnico (`SR-01` a `SR-04`).
-- Ciudad de Bolivia (Santa Cruz de la Sierra, La Paz, Cochabamba, El Alto).
-- Etapa de formalización (Inicial, Taller Operativo, En Notificación AGEMED).
+* **Estrategia de Captación de Leads:** Al registrar el WhatsApp y la ubicación de los emprendedores, la plataforma genera una base de datos valiosísima.
+* **Conversión a Servicio Premium:** El "Pack Completo" o la "Atención Personalizada" abren la puerta para la monetización. Si un emprendedor se traba en un trámite legal de formalización, la plataforma le ofrecerá un botón de "Hablar con un asesor legal en vivo (de pago)" para resolver su caso mediante consultoría tradicional.
 
 ---
 
-## 5. Menú Principal del Usuario (Dashboard)
+## 🗺️ Plan de Ruta Sugerido para el Desarrollo (Roadmap)
 
-Una vez iniciada la sesión, la pantalla presenta:
-1. **Termómetro de Formalización Legal (%)**: Barra de progreso interactiva del avance en el checklist normativo.
-2. **Resumen de Métricas KPI**: Fórmulas creadas, margen promedio $B2C$ (%), estado de Notificación Sanitaria AGEMED.
-3. **Módulos Principales**:
-   - ⚖️ **1. ASESORÍA LEGAL & NSO AGEMED**: Requisitos SEPREC, SIN, GAM, BPM y Generador de Etiquetas INCI.
-   - 📊 **2. ESTRUCTURA DE COSTOS**: Motor reactivo por lote de producción.
-   - 📚 **3. EDUCACIÓN FINANCIERA & KITS**: Microcápsulas y Simulador de Combos para Ferias.
+Para pasar del papel a la realidad, seguiremos este orden cronológico para el desarrollo del software:
 
----
-
-## 6. MÓDULO 1 – ASESORÍA LEGAL & NSO AGEMED
-
-### Subrubros Técnicos del Nicho (`SR-01` a `SR-04`)
-- **[SR-01] Cosmética Natural y Artesanal**: Jabonería botánica, champú sólido, aceites de macerado, mantecas corporales.
-- **[SR-02] Dermocosmética / Cuidado Facial y Capilar**: Sérums activos, tónicos, cremas antiedad, mascarillas arcillosas.
-- **[SR-03] Maquillaje y Pigmentación**: Labiales, rubores ecológicos, sombras minerales.
-- **[SR-04] Servicios de Belleza y Cabina**: Lashistas, manicuristas, facialistas, estética.
-
-### Etapas Secuenciales de la Ruta Legal Boliviana
-1. **Comercial Base**:
-   - **SEPREC**: Registro de Matrícula de Comercio (Unipersonal / SRL).
-   - **SIN**: Obtención del NIT en el Padrón Nacional Biométrico Digital (PBD-digital).
-   - **GAM (Alcaldía)**: Licencia de Funcionamiento Municipal para taller o cabina (SCZ, LP, CBBA, El Alto).
-2. **Sanitaria y Técnica (AGEMED & CAN 516 / 833)**:
-   - **BPM Simplificadas**: Buenas Prácticas de Manufactura para talleres artesanales.
-   - **AGEMED**: Notificación Sanitaria Obligatoria (NSO) bajo Decisiones CAN 516 y 833.
-   - **Estándar de Rotulado e INCI**: Generador interactivo de etiqueta con nomenclatura INCI en orden decreciente, contenido neto ($g/ml$), lote, vencimiento, datos del titular e instrucciones de uso.
-   - **Disclaimer Legal Obligatorio**: Orientación metodológica que no sustituye ensayos de laboratorio ni regencia farmacéutica de AGEMED.
+1. **📊 FASE 1: Definición (1-2 semanas)**
+   * Resolver los pendientes: Fórmulas matemáticas de la calculadora y los primeros 3 rubros legales bien definidos.
+2. **🎨 FASE 2: Diseño UX/UI (2-3 semanas)**
+   * Crear el prototipo visual (en herramientas como Figma) enfocado 100% en celulares (Mobile-first).
+3. **💻 FASE 3: Programación (4-6 semanas)**
+   * Desarrollar la base de datos, el sistema de registro de usuarios, la lógica de la calculadora y el panel administrador (CMS).
+4. **🚀 FASE 4: Carga de Contenido y Lanzamiento (2 semanas)**
+   * Subir los textos legales, las lecciones de educación financiera y lanzar el Producto Mínimo Viable (MVP) al mercado boliviano.
 
 ---
 
-## 7. MÓDULO 2 – MOTOR MATEMÁTICO REACTIVO DE COSTEO
+## 🏗️ Arquitectura de Carpetas y Trabajo en Equipo (Monorepo)
 
-### Algoritmo Matemático de Costeo por Lote
-1. **Conversión Automática de Unidades**:
-   - $1\ \text{Kg} = 1000\text{g}$, $1\ \text{L} = 1000\text{ml}$, $1\ \text{gota} = 0.05\text{ml}$ ($20\ \text{gotas} = 1\text{ml}$).
-2. **Costo Proporcional de Materia Prima ($MP_i$)**:
-   $$\text{Costo MP}_i = \left( \frac{\text{Precio Matriz}_i}{\text{Cantidad Matriz en Unidad Base}_i} \right) \times \text{Cantidad Usada}_i$$
-3. **Factor de Merma Física ($FM$)**:
-   Configurable entre 3% y 8% (Default 5%):
-   $$\text{Costo MP Total con Merma} = \left( \sum_{i=1}^n \text{Costo MP}_i \right) \times (1 + FM)$$
-4. **Costo Total de Packaging ($CP$)**:
-   $$\text{CP} = \sum \text{Envase Primario} + \text{Gotero/Tapa} + \text{Etiquetas} + \text{Precinto} + \text{Caja Secondary}$$
-5. **Mano de Obra Directa ($MOD$)**:
-   $$\text{MOD} = \text{Horas Invertidas} \times \text{Tarifa Horaria Estimada (Bs/h)}$$
-6. **Costos Indirectos Prorrateados ($CIF$)**: Alquiler, electricidad, agua destilada asignados al lote.
-7. **Costo Unitario de Producción ($CUP$)**:
-   $$\text{CUP} = \frac{\text{Costo MP con Merma} + \text{CP} + \text{MOD} + \text{CIF}}{U}$$
-8. **Precios Sugeridos y Punto de Equilibrio**:
-   - $\text{PVP Minorista (B2C)} = \frac{\text{CUP}}{1 - \text{Margen B2C (ej. 0.55)}}$
-   - $\text{Precio Mayorista (B2B)} = \frac{\text{CUP}}{1 - \text{Margen B2B (ej. 0.30)}}$
-   - $\text{Punto de Equilibrio (Unidades/Mes)} = \frac{\text{Costos Fijos Mensuales}}{\text{PVP B2C} - \left(\text{CUP} - \frac{\text{CIF}}{U}\right)}$
+Para facilitar el trabajo en paralelo de dos programadores, el proyecto se divide en dos entornos completamente independientes dentro del mismo repositorio. Esto permite que ambos avancen sin generar conflictos, para luego integrar los sistemas.
 
----
-
-## 8. MÓDULO 3 – EDUCACIÓN FINANCIERA & SIMULADOR DE KITS
-
-### Microcápsulas Educativas
-- **Sueldo del Fundador vs. Ganancias de la Empresa**: Diferencia entre la mano de obra ($MOD$) y las utilidades netas de la marca.
-- **Método PEPS para Aceites y Principios Activos**: Control de inventario de insumos botánicos perecederos para evitar enranciamiento.
-- **Fijación de Precios en Ferias Artesanales**: Estrategia comercial para evitar descuentos destructivos.
-
-### Simulador Interactivo de Combos y Kits de Belleza
-- Selección de productos del catálogo.
-- Aplicación de porcentaje de descuento promocional (ej. 15% OFF).
-- Cálculo instantáneo del costo combinado del pack, precio regular, precio de combo, ganancia neta en Bolivianos ($Bs.$) y porcentaje de margen resultante.
-
----
-
-## 9. Flujo Básico de Navegación
-
-```text
-LANDING PAGE (Propuesta de Valor & Triple Impacto)
-       │
-       ├──> Iniciar Sesión / Crear Cuenta (Perfil de Marca)
-       │
-       └──> DASHBOARD PRINCIPAL (Termómetro de Formalización %)
-              │
-              ├──> MÓDULO 1: Ruta Legal & Generador de Etiqueta INCI (AGEMED)
-              │
-              ├──> MÓDULO 2: Calculadora de Costeo por Lote (CUP, PVP, Punto Equilibrio)
-              │      └──> Exportación de Ficha Técnica de Costos
-              │
-              └──> MÓDULO 3: Academia Financiera & Simulador de Kits de Belleza
-```
-
----
-
-## 10. Arquitectura de Código del Monorepo
+### Estructura de Directorios
 
 ```text
 mypim-express/
 │
-├── frontend/               # 🎨 Cliente React 18 + Vite + Tailwind CSS + Lucide Icons
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Header.jsx                 # Barra superior y badge de formalización
-│   │   │   ├── LandingHero.jsx            # Presentación Triple Impacto HACKBIZ 2026
-│   │   │   ├── Dashboard.jsx              # Panel principal y catálogo de fórmulas
-│   │   │   ├── LegalRouteModule.jsx       # Módulo 1 (SEPREC, SIN, GAM, AGEMED)
-│   │   │   ├── InciLabelGenerator.jsx     # Generador de Etiqueta INCI con preview en vivo
-│   │   │   ├── CostCalculatorModule.jsx   # Módulo 2 (Motor reactivo de costeo)
-│   │   │   ├── AcademyModule.jsx          # Módulo 3 (Academia y simulador de combos)
-│   │   │   ├── BrandProfileModal.jsx      # Modal de configuración de marca
-│   │   │   └── TechnicalSheetModal.jsx    # Modal de Ficha Técnica imprimible
-│   │   ├── utils/
-│   │   │   ├── costingEngine.js           # Algoritmo matemático y conversión de unidades
-│   │   │   ├── legalData.js               # Requisitos SEPREC, SIN, GAM, AGEMED, CAN
-│   │   │   └── academyData.js             # Lecciones financieras y datos de combos
-│   │   ├── App.jsx                        # Layout principal y enrutado de pestañas
-│   │   └── main.jsx
-│   ├── package.json
-│   ├── tailwind.config.js                 # Paleta de colores (Sage/Clay/Linen)
-│   └── vite.config.js
+├── frontend/               # 🎨 Espacio del Programador Frontend
+│   ├── README.md           # Instrucciones y comandos del frontend
+│   └── (Aquí se inicializará el proyecto cliente: React, Next.js, etc.)
 │
-├── backend/                # ⚙️ Servidor Node.js + Express (API REST)
-│   ├── src/
-│   │   ├── routes/
-│   │   │   ├── costing.routes.js          # API REST de cálculo de costeo
-│   │   │   ├── legal.routes.js            # API REST de checklist legal
-│   │   │   └── profile.routes.js          # API REST de estado y salud
-│   │   └── server.js                      # Servidor Express
-│   └── package.json
+├── backend/                # ⚙️ Espacio del Programador Backend
+│   ├── README.md           # Instrucciones y comandos del backend
+│   └── (Aquí se inicializará el servidor: Node.js, Express, Python, etc.)
 │
-└── README.md               # Especificación funcional del proyecto
+└── README.md               # Este documento base
 ```
 
----
+### Flujo de Trabajo Recomendado
 
-## 11. Ejecución del Proyecto en Entorno Local
-
-### Frontend (React + Vite):
-```bash
-cd frontend
-npm install
-npm run dev
-```
-Servidor disponible en: `http://localhost:3000`
-
-### Backend (Node.js + Express):
-```bash
-cd backend
-npm install
-npm run dev
-```
-Servidor API disponible en: `http://localhost:5000`
+1. **Independencia Total (Trabajo en Paralelo):** 
+   * El **Programador Frontend** trabajará EXCLUSIVAMENTE dentro de la carpeta `frontend/`. Desarrollará las interfaces, la vista móvil y la experiencia de usuario. Mientras el backend no esté listo, usará datos de prueba (mocks) para simular respuestas.
+   * El **Programador Backend** trabajará EXCLUSIVAMENTE dentro de la carpeta `backend/`. Diseñará la base de datos, creará la lógica matemática de la calculadora y desarrollará la **API REST** (los endpoints que entregarán y recibirán datos).
+2. **El Puente (La Integración a través de la API):** 
+   * Una vez que el Backend tenga listos sus "endpoints" (ej. un link como `http://localhost:3000/api/calculadora`), le pasará la documentación de esa API al Frontend.
+   * El Frontend conectará sus pantallas a la API real, eliminando los datos de prueba.
+3. **Control de Versiones y Ramas (Git):** 
+   * Para no estorbarse, cada uno debe trabajar en "ramas" (branches) separadas. 
+   * El Frontend podría usar comandos como: `git checkout -b frontend/landing-page`
+   * El Backend podría usar comandos como: `git checkout -b backend/auth-api`
+   * Al terminar una funcionalidad, la unen a la rama `main` a través de *Pull Requests*.

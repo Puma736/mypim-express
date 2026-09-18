@@ -17,9 +17,7 @@ export default function Navbar({
     { id: 'onboarding', label: 'Diagnóstico', icon: Sparkles },
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'legal', label: 'Ruta Legal', icon: ShieldCheck },
-    { id: 'calculator', label: 'Calculadora', icon: Calculator },
     { id: 'academy', label: 'Academia', icon: BookOpen },
-    { id: 'mentoring', label: 'Mentores UAGRM', icon: Users },
     { id: 'impact', label: 'Métricas Impacto', icon: Award }
   ];
 
@@ -157,7 +155,7 @@ export default function Navbar({
             className="w-full py-2.5 rounded-xl bg-rose-500 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-2 mt-2"
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Solicitar Asesoría Legal / Mentorio</span>
+            <span>Solicitar Asesoría Legal</span>
           </button>
         </div>
       )}

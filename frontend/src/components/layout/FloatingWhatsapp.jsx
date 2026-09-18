@@ -6,7 +6,7 @@ export default function FloatingWhatsapp({ brandProfile }) {
     const brandName = brandProfile?.name || 'Mi Emprendimiento Cosmético';
     const city = brandProfile?.city || 'Santa Cruz de la Sierra';
     
-    const message = `¡Hola! Vengo de la plataforma My PiM Express. Mi emprendimiento es "${brandName}" en ${city}. Quisiera hacer una consulta rápida sobre trámites SEPREC / AGEMED o mentoría de la UAGRM.`;
+    const message = `¡Hola! Vengo de la plataforma My PiM Express. Mi emprendimiento es "${brandName}" en ${city}. Quisiera hacer una consulta rápida sobre trámites de formalización SEPREC / AGEMED.`;
     
     window.open(`https://wa.me/59178901234?text=${encodeURIComponent(message)}`, '_blank');
   };

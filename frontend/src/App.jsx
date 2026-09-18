@@ -3,12 +3,11 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import FloatingWhatsapp from './components/layout/FloatingWhatsapp';
 import LandingHero from './components/LandingHero';
+import FormalizationComparisonSection from './components/FormalizationComparisonSection';
 import Dashboard from './components/Dashboard';
 import OnboardingModule from './components/modules/onboarding/OnboardingModule';
 import LegalRouteModule from './components/LegalRouteModule';
-import CostCalculatorModule from './components/CostCalculatorModule';
 import AcademyModule from './components/AcademyModule';
-import MentoringModule from './components/modules/mentoring/MentoringModule';
 import ImpactMetricsModule from './components/modules/impact/ImpactMetricsModule';
 import InciLabelGenerator from './components/InciLabelGenerator';
 import BrandProfileModal from './components/BrandProfileModal';
@@ -44,24 +43,15 @@ export default function App() {
     };
   });
 
-  // Saved Formulas State (Calculator)
-  const [savedFormulas, setSavedFormulas] = useState(() => {
-    const saved = localStorage.getItem('mypim_saved_formulas');
-    return saved ? JSON.parse(saved) : [];
-  });
+  // Active City & Subsector in Legal Route
+  const [selectedCity, setSelectedCity] = useState('scz');
+  const [selectedSubsector, setSelectedSubsector] = useState('SR-01');
 
   // Legal Checklist Completed Steps
   const [completedStepIds, setCompletedStepIds] = useState(() => {
     const saved = localStorage.getItem('mypim_legal_checklist');
     return saved ? JSON.parse(saved) : [];
   });
-
-  // Active City & Subsector in Legal Route
-  const [selectedCity, setSelectedCity] = useState('scz');
-  const [selectedSubsector, setSelectedSubsector] = useState('SR-01');
-
-  // Currently loaded formula in calculator
-  const [loadedFormula, setLoadedFormula] = useState(null);
 
   // Modals
   const [showInciGenerator, setShowInciGenerator] = useState(false);
@@ -92,10 +82,6 @@ export default function App() {
   }, [brandProfile]);
 
   useEffect(() => {
-    localStorage.setItem('mypim_saved_formulas', JSON.stringify(savedFormulas));
-  }, [savedFormulas]);
-
-  useEffect(() => {
     localStorage.setItem('mypim_legal_checklist', JSON.stringify(completedStepIds));
   }, [completedStepIds]);
 
@@ -113,33 +99,6 @@ export default function App() {
     } else {
       setCompletedStepIds([...completedStepIds, stepId]);
     }
-  };
-
-  const handleSaveFormula = async (formulaData) => {
-    const existsIndex = savedFormulas.findIndex(f => f.id === formulaData.id);
-    let updated;
-    if (existsIndex >= 0) {
-      updated = [...savedFormulas];
-      updated[existsIndex] = formulaData;
-    } else {
-      updated = [formulaData, ...savedFormulas];
-    }
-    setSavedFormulas(updated);
-
-    try {
-      await fetch('http://localhost:5000/api/costing/formulas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formulaData)
-      });
-    } catch (e) {
-      // Quiet fail if server offline
-    }
-  };
-
-  const handleLoadFormulaToCalculator = (formula) => {
-    setLoadedFormula(formula);
-    setActiveTab('calculator');
   };
 
   const handleAuthSuccess = (userData, userToken) => {
@@ -178,11 +137,17 @@ export default function App() {
       {/* Main Tab View Controller */}
       <main className="flex-grow">
         {activeTab === 'landing' && (
-          <LandingHero
-            onStartLegal={() => setActiveTab('legal')}
-            onStartAcademy={() => setActiveTab('academy')}
-            onOpenAdvisory={() => setShowAdvisoryModal(true)}
-          />
+          <>
+            <LandingHero
+              onStartLegal={() => setActiveTab('legal')}
+              onStartAcademy={() => setActiveTab('academy')}
+              onOpenAdvisory={() => setShowAdvisoryModal(true)}
+            />
+            <FormalizationComparisonSection
+              onNavigateToLegal={() => setActiveTab('legal')}
+              onOpenAdvisory={() => setShowAdvisoryModal(true)}
+            />
+          </>
         )}
 
         {activeTab === 'onboarding' && (
@@ -217,22 +182,8 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'calculator' && (
-          <CostCalculatorModule
-            onSaveFormula={handleSaveFormula}
-            loadedFormula={loadedFormula}
-          />
-        )}
-
         {activeTab === 'academy' && (
           <AcademyModule />
-        )}
-
-        {activeTab === 'mentoring' && (
-          <MentoringModule
-            brandProfile={brandProfile}
-            formalizationPercentage={formalizationPercentage}
-          />
         )}
 
         {activeTab === 'impact' && (

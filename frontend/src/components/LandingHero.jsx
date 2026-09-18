@@ -1,123 +1,104 @@
 import React from 'react';
-import { Sparkles, Calculator, ShieldCheck, BookOpen, Leaf, Users, TrendingUp, ArrowRight, Award } from 'lucide-react';
+import { Scissors, Calculator, ShieldCheck, ArrowRight, MessageCircle, Star, MapPin, TrendingUp, Zap } from 'lucide-react';
 
-export default function LandingHero({ onStartCalculator, onStartLegal, onStartAcademy }) {
+const STATS = [
+  { value: '8 Rangos', label: 'RTS Bolivia (SIN)', icon: ShieldCheck, color: 'from-rose-500 to-rose-700' },
+  { value: 'Bs. 15', label: 'CIF diario calculado', icon: Zap, color: 'from-gold-500 to-gold-700' },
+  { value: '4 Mercados', label: 'Mutualista · La Ramada · y más', icon: MapPin, color: 'from-rose-400 to-gold-500' },
+  { value: '100% Bs.', label: 'Precios en Bolivianos', icon: TrendingUp, color: 'from-emerald-500 to-emerald-700' },
+];
+
+const FEATURES = [
+  { icon: Scissors,      title: 'Registro de tu Negocio',     desc: 'Guarda los datos de tu peluquería, estética, salón de uñas o spa: nombre, mercado, propietaria y capital.' },
+  { icon: ShieldCheck,   title: 'Simulador RTS Bolivia',      desc: 'Descubre tu categoría tributaria y cuánto pagas al SIN cada dos meses.' },
+  { icon: Calculator,    title: 'Costeo de Servicios',        desc: 'Calcula el precio real de cualquier servicio: tinte, keratina, manicura, corte, extensiones y más.' },
+  { icon: MessageCircle, title: 'Reporte por WhatsApp',       desc: 'Envía el resumen completo de costeo e impuesto a tu equipo con un solo toque.' },
+];
+
+export default function LandingHero({ onStart }) {
   return (
-    <div className="relative overflow-hidden py-8 sm:py-16 bg-gradient-to-b from-linen-50 via-white to-linen-50">
-      
-      {/* Background Decorative Accents */}
-      <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-sage-200/30 blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 -left-24 w-80 h-80 rounded-full bg-clay-200/30 blur-3xl pointer-events-none" />
+    <div className="relative overflow-hidden bg-gradient-to-b from-cream-50 via-white to-cream-50">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Hackbiz 2026 Banner */}
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-sage-100 via-clay-100 to-sage-100 border border-sage-200 text-sage-800 text-xs sm:text-sm font-semibold shadow-sm">
-            <Award className="w-4 h-4 text-clay-600 animate-bounce" />
-            <span>Hackatón HACKBIZ 2026 - UAGRM | Solución de Triple Impacto</span>
+      {/* Blobs decorativos */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-rose-200/20 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 -left-24 w-80 h-80 rounded-full bg-gold-200/20 blur-3xl pointer-events-none" />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+
+        {/* ── Hero ─────────────────────────────────── */}
+        <div className="pt-12 sm:pt-20 pb-8 text-center">
+
+          {/* Badge hackathon */}
+          <div className="animate-fade-in-up stagger-1 flex justify-center mb-6">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-gradient-to-r from-rose-100 to-gold-100 border border-rose-200 text-rose-800 text-sm font-semibold shadow-sm">
+              <Star className="w-4 h-4 text-gold-500 fill-gold-400" />
+              Hackatón <strong>HACKBIZ 2026</strong> · UAGRM · Santa Cruz, Bolivia
+            </div>
           </div>
-        </div>
 
-        {/* Hero Main Content */}
-        <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-charcoal-900 tracking-tight leading-tight">
-            Impulsa tu Marca Cosmética & Dermocosmética en <span className="text-transparent bg-clip-text bg-gradient-to-r from-sage-600 to-clay-500">Bolivia</span>
+          <h1 className="animate-fade-in-up stagger-2 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-charcoal-900 tracking-tight leading-tight">
+            Gestión financiera para
+            <br />
+            <span className="gradient-text">el sector de belleza & estética</span>
           </h1>
-          <p className="mt-4 sm:mt-6 text-base sm:text-xl text-slate-600 leading-relaxed font-normal">
-            La primera plataforma RegTech y consultor financiero de bolsillo diseñado para emprendedoras, formuladores artesanales y profesionales de la estética en Santa Cruz, La Paz, Cochabamba y El Alto.
+
+          <p className="animate-fade-in-up stagger-3 mt-5 text-base sm:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
+            Para <strong className="text-charcoal-900">peluquerías, centros de estética, salones de uñas, spas, barberías y lashistas</strong> en
+            <strong className="text-charcoal-900"> Santa Cruz de la Sierra</strong>.
+            Calcula precios reales y conoce tu impuesto RTS en segundos.
           </p>
 
-          {/* Action CTA Buttons */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="animate-fade-in-up stagger-4 mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={onStartCalculator}
-              className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-sage-600 hover:bg-sage-700 text-white font-bold text-base sm:text-lg shadow-lg shadow-sage-600/30 flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              onClick={() => onStart('registro')}
+              className="group w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bold text-lg shadow-xl shadow-rose-500/30 flex items-center justify-center gap-3 transition-all hover:scale-[1.02]"
             >
-              <Calculator className="w-5 h-5" />
-              <span>Calcular Costo por Lote</span>
-              <ArrowRight className="w-5 h-5" />
+              <Scissors className="w-5 h-5" />
+              Registrar mi Negocio
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            
             <button
-              onClick={onStartLegal}
-              className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-base sm:text-lg border border-slate-300 shadow-md flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              onClick={() => onStart('costeo')}
+              className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white border border-slate-200 hover:border-rose-300 text-slate-700 font-bold text-lg shadow-md flex items-center justify-center gap-3 transition-all hover:scale-[1.02]"
             >
-              <ShieldCheck className="w-5 h-5 text-clay-500" />
-              <span>Ver Ruta Legal & INCI</span>
+              <Calculator className="w-5 h-5 text-rose-500" />
+              Calcular Precio
             </button>
           </div>
+
+          <p className="animate-fade-in stagger-5 mt-4 text-xs text-slate-400">
+            ✓ Sin registro · ✓ Gratis · ✓ Funciona sin internet · ✓ En Bolivianos
+          </p>
         </div>
 
-        {/* Triple Impact Value Cards */}
-        <div className="mt-16 sm:mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-          
-          <div className="p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-md border border-slate-200/80 shadow-xl shadow-slate-200/40 transition-transform hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-sage-100 text-sage-600 flex items-center justify-center mb-6">
-              <Leaf className="w-7 h-7" />
+        {/* ── Stats ────────────────────────────────── */}
+        <div className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {STATS.map((s, i) => (
+            <div key={s.label} className={`animate-fade-in-up stagger-${i + 1} p-5 rounded-3xl bg-white border border-slate-200/80 shadow-md hover:-translate-y-0.5 transition-all text-center space-y-3`}>
+              <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center mx-auto shadow-md`}>
+                <s.icon className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xl font-black text-charcoal-900 stat-number">{s.value}</p>
+                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{s.label}</p>
+              </div>
             </div>
-            <h3 className="text-xl font-bold text-charcoal-900 mb-2">1. Sostenibilidad Ambiental</h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Fomenta el aprovechamiento responsable de botánicos amazónicos y chiquitanos, reduciendo el desperdicio de materia prima mediante cálculo reactivo de mermas (3%-8%) y envases biodegradables.
-            </p>
-          </div>
-
-          <div className="p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-md border border-slate-200/80 shadow-xl shadow-slate-200/40 transition-transform hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-clay-100 text-clay-600 flex items-center justify-center mb-6">
-              <Users className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-bold text-charcoal-900 mb-2">2. Empleo Juvenil & Mujer</h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Empodera a jóvenes graduados y mujeres creadoras de cosmética natural, convirtiendo pasatiempos artesanales en microempresas rentables con valoración de mano de obra justa ($MOD$).
-            </p>
-          </div>
-
-          <div className="p-6 sm:p-8 rounded-3xl bg-white/80 backdrop-blur-md border border-slate-200/80 shadow-xl shadow-slate-200/40 transition-transform hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mb-6">
-              <TrendingUp className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-bold text-charcoal-900 mb-2">3. Formalización Progresiva</h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Desmitifica la burocracia en Bolivia. Guía paso a paso para SEPREC, NIT, Licencias Municipales, BPM y Notificación Sanitaria Obligatoria ante AGEMED (CAN 516/833).
-            </p>
-          </div>
-
+          ))}
         </div>
 
-        {/* Feature Grid Shortcut */}
-        <div className="mt-12 bg-gradient-to-r from-sage-900 via-charcoal-900 to-slate-900 rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden">
-          <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none">
-            <Sparkles className="w-96 h-96 text-white" />
-          </div>
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-            <div className="lg:col-span-2">
-              <span className="px-3 py-1 rounded-full bg-sage-500/20 text-sage-300 text-xs font-semibold border border-sage-500/30">
-                Solución Todo-en-Uno
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-bold mt-3">
-                Diseñado para la realidad del emprendedor boliviano
-              </h2>
-              <p className="text-slate-300 mt-2 text-sm sm:text-base leading-relaxed">
-                Precios en Bolivianos ($Bs.$), conversión automática de unidades ($gotas, ml, L, g, Kg$), generador de etiquetas INCI y simulador de combos para ferias.
-              </p>
+        {/* ── Features ─────────────────────────────── */}
+        <div className="mt-16 sm:mt-20 grid grid-cols-1 sm:grid-cols-2 gap-5 pb-16">
+          {FEATURES.map((f, i) => (
+            <div key={f.title} className={`animate-fade-in-up stagger-${i + 1} flex items-start gap-5 p-6 rounded-3xl bg-white border border-slate-200/80 shadow-sm hover:border-rose-300 hover:shadow-md transition-all`}>
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center flex-shrink-0 border border-rose-100">
+                <f.icon className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="font-bold text-charcoal-900 text-sm mb-1">{f.title}</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">{f.desc}</p>
+              </div>
             </div>
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={onStartCalculator}
-                className="w-full px-6 py-3.5 rounded-xl bg-clay-500 hover:bg-clay-600 text-white font-bold text-sm flex items-center justify-center gap-2 transition-all"
-              >
-                <Calculator className="w-4 h-4" />
-                <span>Ir a Calculadora de Costos</span>
-              </button>
-              <button
-                onClick={onStartAcademy}
-                className="w-full px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 flex items-center justify-center gap-2 transition-all"
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>Explorar Academia Financiera</span>
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
 
       </div>

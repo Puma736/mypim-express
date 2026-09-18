@@ -1,51 +1,50 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        sage: {
-          50: '#f4f7f4',
-          100: '#e3ebe4',
-          200: '#c8d8cb',
-          300: '#a3beaa',
-          400: '#7a9f84',
-          500: '#5b7065', // Main Sage Accent
-          600: '#485b50',
-          700: '#3a4a41',
-          800: '#303c35',
-          900: '#2a332d',
+        // Rosa/Magenta — identidad de salones de belleza
+        rose: {
+          50:  '#fff1f5',
+          100: '#ffe4ed',
+          200: '#fecdd9',
+          300: '#fda4bb',
+          400: '#fb7299',
+          500: '#f43f74',  // Primario
+          600: '#e11d5a',
+          700: '#be1249',
+          800: '#9d1240',
+          900: '#841139',
         },
-        clay: {
-          50: '#faf5f3',
-          100: '#f4e9e5',
-          200: '#ebd4cc',
-          300: '#dcb5a7',
-          400: '#ca9280',
-          500: '#c28d75', // Main Terracotta/Clay Accent
-          600: '#aa6b52',
-          700: '#8e543e',
-          800: '#754636',
-          900: '#613d30',
+        // Dorado/Cobre — acento premium
+        gold: {
+          50:  '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b',  // Acento
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
         },
-        linen: {
-          50: '#fdfbf7',
-          100: '#f8f5ee',
-          200: '#eee8da',
-          300: '#e1d6c0',
-        },
+        // Carbón — textos y fondos oscuros
         charcoal: {
-          800: '#2d3748',
-          900: '#1f2937',
-        }
+          800: '#1f2937',
+          900: '#111827',
+        },
+        // Crema — fondo general
+        cream: {
+          50:  '#fdfaf7',
+          100: '#f9f4ee',
+        },
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
-      }
+      },
     },
   },
   plugins: [],
-}
+};

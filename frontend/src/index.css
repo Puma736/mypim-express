@@ -1,54 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    background-color: #FDFBF7;
-    color: #1F2937;
+    background-color: #fdfaf7;
+    color: #111827;
     font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Custom Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ── Animaciones ──────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-::-webkit-scrollbar-track {
-  background: #F8F9FA;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
-::-webkit-scrollbar-thumb {
-  background: #C8D8CB;
-  border-radius: 9999px;
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #5B7065;
-}
-
-/* Print Styles for Technical Cost Sheet & INCI Label PDF export */
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  #printable-area, #printable-area * {
-    visibility: visible;
-  }
-  #printable-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-  }
-  .no-print {
-    display: none !important;
-  }
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-/* Glassmorphism utility */
-.glass-panel {
-  background: rgba(253, 251, 247, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+.animate-fade-in-up  { animation: fadeInUp 0.55s ease-out both; }
+.animate-fade-in     { animation: fadeIn   0.4s  ease-out both; }
+.animate-scale-in    { animation: scaleIn  0.4s  ease-out both; }
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.12s; }
+.stagger-3 { animation-delay: 0.19s; }
+.stagger-4 { animation-delay: 0.26s; }
+.stagger-5 { animation-delay: 0.33s; }
+
+/* ── Scrollbar ────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f9f4ee; }
+::-webkit-scrollbar-thumb { background: #fda4bb; border-radius: 9999px; }
+
+/* ── Gradient text ────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #f43f74 0%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Stat numbers (tabular) ───────────────────────── */
+.stat-number {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ── Input base ───────────────────────────────────── */
+.input-base {
+  @apply w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium
+         text-charcoal-900 focus:outline-none focus:border-rose-400 focus:ring-2
+         focus:ring-rose-100 transition-all;
+}
+
+/* ── Card base ────────────────────────────────────── */
+.card {
+  @apply bg-white rounded-3xl border border-slate-200/80 shadow-sm;
 }

@@ -5,7 +5,8 @@ import RegistroEsteticaForm from './components/RegistroEsteticaForm.jsx';
 import SimuladorRTS from './components/SimuladorRTS.jsx';
 import CosteoServicioForm from './components/CosteoServicioForm.jsx';
 import WhatsAppButton from './components/WhatsAppButton.jsx';
-import { Scissors, ShieldCheck, Calculator, MessageCircle, LayoutDashboard, Store, TrendingUp, FileText, ArrowRight } from 'lucide-react';
+import DiagnosticoModule from './components/DiagnosticoModule.jsx';
+import { Scissors, ShieldCheck, Calculator, MessageCircle, LayoutDashboard, Store, TrendingUp, FileText, ArrowRight, ClipboardList } from 'lucide-react';
 import { formatBs } from './utils/costingEngine.js';
 import { calcularRTS } from './utils/rtsEngine.js';
 
@@ -112,10 +113,11 @@ export default function App() {
       {/* Accesos rápidos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { id: 'registro',  label: 'Mi Salón',       icon: Scissors,      color: 'hover:border-rose-400', num: '01' },
-          { id: 'rts',       label: 'Impuesto RTS',   icon: ShieldCheck,   color: 'hover:border-amber-400', num: '02' },
-          { id: 'costeo',    label: 'Costeo',         icon: Calculator,    color: 'hover:border-blue-400', num: '03' },
-          { id: 'whatsapp',  label: 'Reporte WA',     icon: MessageCircle, color: 'hover:border-green-400', num: '04' },
+          { id: 'registro',     label: 'Mi Salón',       icon: Scissors,       color: 'hover:border-rose-400',   num: '01' },
+          { id: 'rts',          label: 'Impuesto RTS',   icon: ShieldCheck,    color: 'hover:border-amber-400',  num: '02' },
+          { id: 'costeo',       label: 'Costeo',         icon: Calculator,     color: 'hover:border-blue-400',   num: '03' },
+          { id: 'diagnostico',  label: 'Diagnóstico',    icon: ClipboardList,  color: 'hover:border-purple-400', num: '04' },
+          { id: 'whatsapp',     label: 'Reporte WA',     icon: MessageCircle,  color: 'hover:border-green-400',  num: '05' },
         ].map((m, i) => (
           <div key={m.id} onClick={() => setActiveTab(m.id)}
             className={`animate-fade-in-up stagger-${i + 1} cursor-pointer p-5 card border border-slate-200 ${m.color} hover:shadow-md transition-all relative overflow-hidden`}>
@@ -187,6 +189,13 @@ export default function App() {
               esteticaId={estetica?.id_estetica}
               onGuardar={handleGuardarServicio}
             />
+          </TabSection>
+        )}
+
+        {activeTab === 'diagnostico' && (
+          <TabSection title="Diagnóstico Gratuito" icon={ClipboardList} color="dark"
+            subtitle="Responde unas preguntas rápidas y te decimos qué régimen tributario te conviene y qué documentos necesitas.">
+            <DiagnosticoModule />
           </TabSection>
         )}
 

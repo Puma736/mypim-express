@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Scissors, Menu, X, LayoutDashboard, ShieldCheck, Calculator, MessageCircle, Home } from 'lucide-react';
+import { Scissors, Menu, X, LayoutDashboard, ShieldCheck, Calculator, MessageCircle, Home, ClipboardList } from 'lucide-react';
 
 const NAV = [
-  { id: 'dashboard',  label: 'Dashboard',      icon: LayoutDashboard },
-  { id: 'registro',   label: 'Mi Negocio',     icon: Scissors },
-  { id: 'rts',        label: 'Impuesto RTS',   icon: ShieldCheck },
-  { id: 'costeo',     label: 'Costeo',         icon: Calculator },
-  { id: 'whatsapp',   label: 'Enviar Reporte', icon: MessageCircle },
+  { id: 'dashboard',    label: 'Dashboard',      icon: LayoutDashboard },
+  { id: 'registro',     label: 'Mi Negocio',     icon: Scissors },
+  { id: 'rts',          label: 'Impuesto RTS',   icon: ShieldCheck },
+  { id: 'costeo',       label: 'Costeo',         icon: Calculator },
+  { id: 'diagnostico',  label: 'Diagnóstico',    icon: ClipboardList },
+  { id: 'whatsapp',     label: 'Enviar Reporte', icon: MessageCircle },
 ];
 
 export default function Header({ activeTab, setActiveTab }) {
